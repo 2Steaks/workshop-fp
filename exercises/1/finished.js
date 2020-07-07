@@ -11,8 +11,7 @@ const trace = (x) => {
  * EXERCISES
  * - Hopefully you should get a lego feel from what you do.
  * - Focus on the shape of your inputs, think unary and at most binary
- * - Try and notice data flow through composition
- * - Remember to use trace
+ * - Remember to use trace in your compositions
  * - Remember that the imperative has been abstracted away so your FP library will have an answer for 95% for what you do
  ******************************************************************************/
 
@@ -61,7 +60,7 @@ const filterQs = R.filter(R.test(/q/ig));
 // filterQs(qList);
 
 /*******************************************************************************
- * EXERCISE - THREE - INPUT SHAPE (Unary)
+ * EXERCISE - FOUR - INPUT SHAPE (Unary)
  ******************************************************************************/
 function add_(x, y) {
   return x + y;
@@ -79,7 +78,7 @@ function divideBy_(x, y) {
 // const calc = R.pipe(R.add(3), R.multiply(3), R.divide(2));
 
 /*******************************************************************************
- * EXERCISE - FOUR - GENERALISE
+ * EXERCISE - FIVE - GENERALISE
  ******************************************************************************/
 const cameras = [
   { model_name: "Canon EOS 5D", in_stock: true, price: 123 },
@@ -99,7 +98,7 @@ const isLastInStock = R.pipe(R.last, R.prop('in_stock'));
 // isLastInStock(cameras);
 
 /*******************************************************************************
- * EXERCISE - FIVE - BREAKING IT DOWN (Remainder -> Equals)
+ * EXERCISE - SIX - BREAKING IT DOWN (Remainder -> Equals)
  ******************************************************************************/
 function isOdd_(x) {
   return x % 2 === 1;

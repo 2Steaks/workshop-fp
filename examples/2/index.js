@@ -1,4 +1,7 @@
 import axios from "axios";
+// https://ramdajs.com/
+// https://github.com/ramda/ramda/wiki/Cookbook
+import R from "ramda";
 // https://monet.github.io/monet.js/
 // https://evojam.com/technology-blog/2016/02/22/practical-intro-to-monads-in-javascript
 import M from "monet";
@@ -8,6 +11,8 @@ import Future from "fluture";
 // https://folktale.origamitower.com/
 // https://folktale.origamitower.com/api/v2.0.0/en/folktale.concurrency.task.html
 import Task from "folktale/concurrency/task";
+// https://github.com/rpominov/fun-task
+import FunTask from 'fun-task';
 
 const trace = (x) => {
   console.log(JSON.stringify(x));
@@ -100,15 +105,33 @@ const Nothing = (x) => ({
   inspect: `Nothing(${x})`,
 });
 
-const toMaybe = (x) => (x ? M.Maybe.Just(x) : M.Maybe.Nothing());
-
 const getNullOrUndefined = (x) => null;
 const getValue = (x) => x;
 
 // M.Maybe.of("hello")
-//   .chain((x) => toMaybe(getNullOrUndefined(x)))
+//   .chain(safe(getNullOrUndefined))
 //   .map(x => x + ' world')
 //   .orSome('default value');
+
+const isFunction = x => typeof x === 'function';
+const isString = x => typeof x === 'string';
+
+const safe = pred => R.ifElse(pred, M.Maybe.Just, M.Maybe.Nothing);
+const option = (x) => (maybe) => {
+  if(!(maybe && isFunction(maybe.orSome))) {
+    throw new TypeError('option: Last argument must be a Maybe');
+  }
+
+  return maybe.orSome(x)
+};
+
+// const getName = R.compose(
+//   option('no name'),
+//   safe(isString),
+//   R.prop('name')
+// )
+
+// getName({ name: 'Ben' });
 
 /*******************************************************************************
  * MONADS - EITHER
@@ -180,6 +203,7 @@ function stringToUppercaseReversed() {
 
 /*******************************************************************************
  * MONADS - TASK/FUTURE
+ * 
  * - Async operations
  * - Composable
  * - Defered execution
@@ -187,7 +211,7 @@ function stringToUppercaseReversed() {
  ******************************************************************************/
 
 /*******************************************************************************
- * MONADS - TASK/FUTURE - FLUTURE->FUTURE
+ * MONADS - FUTURE - FLUTURE->FUTURE
  ******************************************************************************/
 
 // pure functions
@@ -200,9 +224,8 @@ const flutureDelay = (ms) => {
 };
 
 const FaxiosGet = Future.encaseP(axios.get);
-const fetchGoogle = FaxiosGet("https://www.google.co.uk/").pipe(
-  Future.map((x) => x.data)
-);
+const fetchGoogle = FaxiosGet("https://www.google.co.uk/")
+  .pipe(Future.map((x) => x.data));
 
 // -----------------------------------------------------------------------------
 
@@ -214,7 +237,16 @@ const failureFn = (error) => console.error(error);
 // Returns cancel action
 // unsubscribe();
 
-// Future.fork(failureFn)(successFn)(faxiosFetchGoogle);
+// 
+// async/await style
+async function getGoogle() {
+  const response = await Future.promise(fetchGoogle);
+  
+  console.log(response);
+}
+
+// getGoogle();
+
 
 /*******************************************************************************
  * MONADS - TASK/FUTURE - FOLKTALE->TASK
@@ -245,18 +277,50 @@ const fetchBing = TaxiosGet("https://www.bing.com/").map((x) => x.data);
 // Callback style
 // waits 100ms
 // Returns cancel action
-const unsubscribe = taskDelay(100).or(taskDelay(2000)).listen({
-    onCancelled: () => console.log("task was cancelled"),
-    onRejected: (reason) => console.log(`task was rejected because ${reason}`),
-    onResolved: (x) => console.log(x),
-});
+// const unsubscribe = taskDelay(100).or(taskDelay(2000)).run().listen({
+//     onCancelled: () => console.log("task was cancelled"),
+//     onRejected: (reason) => console.log(`task was rejected because ${reason}`),
+//     onResolved: (x) => console.log(x),
+// });
 
 // unsubscribe();
 
 // async/await style
-const fetchBingExecution = fetchBing.run();
-// const response = await fetchBingExecution.promise();
+async function getBing() {
+  const exec = fetchBing.run();
+  await exec.promise();
+  
+  // this will halt mapping
+  exec.future().cancel();
+  exec.future().map(x => console.log(x));
+}
 
-// Future values can be mapped/cancelled
-// fetchBingExecution.future().map(x => x);
-// fetchBingExecution.future().cancel();
+// getBing();
+
+/*******************************************************************************
+ * MONADS - TASK - FUNTASK
+ ******************************************************************************/
+
+const funTaskDelay = (ms) => FunTask.create((res) => {
+  const id = setTimeout(() => res(ms), ms);
+
+  return () => clearTimeout(id);
+})
+
+// const unsubscribe = funTaskDelay.run({
+//   success(x) {
+//     console.log(x)
+//   }, 
+//   failure(error) {
+//     console.log(`task was rejected because ${error}`)
+//   }
+// })
+
+// unsubscribe();
+
+async function funTaskToPromise() {
+  const response = await funTaskDelay(1000).toPromise();
+  console.log(response);
+}
+
+// funTaskToPromise();

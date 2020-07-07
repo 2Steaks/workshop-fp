@@ -1,11 +1,67 @@
 // https://ramdajs.com/
 // https://github.com/ramda/ramda/wiki/Cookbook
-import R from "ramda";
+import R  from "ramda";
 
 const trace = (x) => {
   console.log(JSON.stringify(x));
   return x;
 };
+
+/*******************************************************************************
+ * BASIC EXAMPLES
+ ******************************************************************************/
+
+const equals = x === y;
+const xEqualsY = R.equals(x, y);
+
+const isHello = R.equals('hello');
+const isHelloTrue = isHello('hello');
+
+// -----------------------------------------------------------------------------
+
+const four = 2 + 2;
+const six = R.add(3, 3);
+
+const add4 = R.add(4);
+const eight = add4(R.add(3, 1));
+
+// -----------------------------------------------------------------------------
+
+const arr = [
+  { a: 1, b: 1, c: 1 },
+  { a: 2, b: 2, c: 2 },
+  { a: 3, b: 3, c: 3 },
+  { a: 4, b: 4, c: 4 },
+  { a: 5, b: 5, c: 5 }
+];
+// imperative
+arr.find((item) => item.a === 3);
+// declarative
+R.find(R.propEq('a', 3), arr);
+// { a: 3, b: 3, c: 3 }
+
+// -----------------------------------------------------------------------------
+
+const obj = { d: 3, e: 3, f: 3 };
+// imperative
+arr.map((item) => {
+  if (item.a === 3) {
+    return { ...item, ...obj };
+  }
+
+  return obj;
+});
+// declarative
+const mergeWhen = R.curry((pred, obj, arr) => R.map(R.when(pred, R.mergeLeft(obj)), arr));
+// *****
+mergeWhen(R.propEq('a', 3), obj, arr);
+// { a: 3, b: 3, c: 3, d: 3, e: 3, f: 3 }
+mergeWhen(R.equals(3), obj, arr[2]);
+// {
+//   a: { d: 3, e: 3, f: 3 },
+//   b: { d: 3, e: 3, f: 3 },
+//   c: { d: 3, e: 3, f: 3 }
+// }
 
 /*******************************************************************************
  * LENSES
@@ -37,10 +93,11 @@ function hasFilters_() {
 // hasFilters_();
 
 // PURE FUNCTION MODULE
+const hasValue = R.complement(R.isEmpty);
 const activeFilterLens = R.lensPath(["filters", "active"]);
 
-const hasFilters = R.pipe(R.view(activeFilterLens), R.isEmpty, R.not);
 const getFilters = R.view(activeFilterLens);
+const hasFilters = R.pipe(getFilters, hasValue);
 const setFilters = R.set(activeFilterLens);
 
 // -----------------------------------------------------------------------------
@@ -111,13 +168,66 @@ const transArr = [{ x: "boom" }, { x: false }, { x: "splat" }];
 // transduceXY(transArr);
 
 /*******************************************************************************
- * REAL WORLD
+ * REAL WORLD EXAMPLES
  ******************************************************************************/
+
+function deleteObservation_() {
+  const { values } = this.props;
+  const { observationModal } = this.state;
+  const { rowIndex } = observationModal;
+  const previousObservations =
+      getNestedValue({
+          object: values,
+          fieldPath: 'general.observations'
+      }) || [];
+  const observations = previousObservations.filter(
+      (obj, index) => index !== rowIndex
+  );
+
+  this.updateObservationData({ observations });
+  this.closeObservationModal();
+}
+
+// // pure functions
+// const getObservations = R.path(["general", "observations"]);
+// const removeObservation = (index, values) =>  R.pipe(getObservations, R.remove(index, 1))(values);
+
+// // react component
+// function deleteObservation() {
+//   const { values } = this.props;
+//   const { observationModal } = this.state;
+//   const { rowIndex } = observationModal;
+
+//   this.updateObservationData({ observations: removeObservation(rowIndex, values) });
+//   this.closeObservationModal();
+// }
+
+// -----------------------------------------------------------------------------
+
+function hasAddress_() {
+  const { values } = this.props;
+  const address = getNestedValue({
+      object: values,
+      fieldPath: 'collection.address'
+  });
+
+  return Boolean(
+      address &&
+      hasValue(address.country) && 
+      hasValue(address.postcode)
+  );
+}
+
+// pure functions
+// const validation = R.where({ country: hasValue, postcode: hasValue });
+// const hasAddress = R.pathSatisfies(validation, ['collection', 'address']);
+
+// -----------------------------------------------------------------------------
 
 const camelCase = (str) =>
   str.replace(/[-_]([a-z])/g, (x) => x[1].toUpperCase());
 
-const obj = {
+const convertObj = {
   a_one: {},
   b_one: [
     {
@@ -157,7 +267,7 @@ function convertKeyNames_(object: any, convert: (name: string) => string): any {
   }
 }
 
-// convertKeyNames_(obj, camelCase);
+// convertKeyNames_(convertObj, camelCase);
 
 // 1st attempt
 // const convertKeyNames = (fn, obj) => {
@@ -167,7 +277,7 @@ function convertKeyNames_(object: any, convert: (name: string) => string): any {
 //   return R.ifElse(Array.isArray, R.map(reducePairs), reducePairs)(obj);
 // };
 
-// convertKeyNames(camelCase, obj);
+// convertKeyNames(camelCase, convertObj);
 
 // 2nd attempt higher order function with inverted control
 // const reduceNodes = (fn) => {
@@ -179,4 +289,4 @@ function convertKeyNames_(object: any, convert: (name: string) => string): any {
 
 // const toCamelCaseKeys = (key, value) => ({ [camelCase(key)]: convertKeyNames(value) });
 // const convertKeyNames = reduceNodes(toCamelCaseKeys);
-// convertKeyNames(obj);
+// convertKeyNames(convertObj);

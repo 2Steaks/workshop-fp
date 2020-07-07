@@ -10,10 +10,9 @@ const trace = (x) => {
 /*******************************************************************************
  * EXERCISES
  * - Hopefully you should get a lego feel from what you do.
- * - Focus on the shape of your inputs, think unary and at most binary
- * - Try and notice data flow through composition
- * - Remember to use trace
- * - Remember that the imperative has been abstracted away so your FP library will have an answer for 95% for what you do
+ * - Focus on the shaping your inputs to be unary
+ * - Remember to use trace in your compositions
+ * - Remember that the imperative has been abstracted away so your FP library will have everything you need
  ******************************************************************************/
 
 /*******************************************************************************
@@ -52,7 +51,7 @@ const filterQs_ = function (arr) {
 // filterQs_(qList);
 
 /*******************************************************************************
- * EXERCISE - THREE - INPUT SHAPE (Unary)
+ * EXERCISE - FOUR - INPUT SHAPE (Unary)
  ******************************************************************************/
 function add_(x, y) {
   return x + y;
@@ -69,7 +68,7 @@ function divideBy_(x, y) {
 // divideBy_(2, multiplyBy3_(add_(3, 5)));
 
 /*******************************************************************************
- * EXERCISE - FOUR - GENERALISE
+ * EXERCISE - FIVE - GENERALISE
  ******************************************************************************/
 const cameras = [
   { model_name: "Canon EOS 5D", in_stock: true, price: 123 },
@@ -86,7 +85,7 @@ const isLastCameraInStock_ = function (cameras) {
 // isLastCameraInStock_(cameras);
 
 /*******************************************************************************
- * EXERCISE - FIVE - BREAKING IT DOWN (Remainder -> Equals)
+ * EXERCISE - SIX - BREAKING IT DOWN (Remainder -> Equals)
  ******************************************************************************/
 function isOdd_(x) {
   return x % 2 === 1;
