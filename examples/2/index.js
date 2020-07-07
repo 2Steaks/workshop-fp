@@ -32,7 +32,7 @@ const trace = (x) => {
  * - Getting slightly heavier into FP world
  ******************************************************************************/
 
-[{ isFunctor: true }].map((x) => x);
+//[{ isFunctor: true }].map((x) => x);
 
 // Otherwise known as Identity
 const Box = (x) => ({
@@ -61,10 +61,10 @@ Box.of = Box;
  * - Just be aware of them
  ******************************************************************************/
 
-const promiseMe = new Promise((res, rej) => res({ isLikeMonad: true }))
-  .then(x)
-  .then(y)
-  .then(z);
+// const promiseMe = new Promise((res, rej) => res({ isLikeMonad: true }))
+//   .then(x)
+//   .then(y)
+//   .then(z);
 
 function couldReturnSomething_(prop) {
   if (!prop) {
@@ -87,9 +87,6 @@ function couldReturnSomething_(prop) {
  * - Short circuiting
  * - Expects a Just (success) or a Nothing (failure)
  ******************************************************************************/
-
-const Maybe = (x) => ({ x });
-Maybe.of = (x) => Just(x);
 
 const Just = (x) => ({
   map: (f) => Just(f(x)),
@@ -138,9 +135,6 @@ const option = (x) => (maybe) => {
  * - Branching logic (think train tracks)
  * - Expects a Right (success) or a Left (failure)
  ******************************************************************************/
-
-const Either = (x) => ({ x });
-Either.of = (x) => Right(x);
 
 const Right = (x) => ({
   map: (f) => Right(f(x)),
@@ -288,7 +282,7 @@ const fetchBing = TaxiosGet("https://www.bing.com/").map((x) => x.data);
 // async/await style
 async function getBing() {
   const exec = fetchBing.run();
-  await exec.promise();
+  const response = await exec.promise();
   
   // this will halt mapping
   exec.future().cancel();

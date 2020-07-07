@@ -42,7 +42,7 @@ Identity.of = Identity;
  * EXERCISE - ONE - THE BASE (FUNCTOR)
  ******************************************************************************/
 
-const values = {
+const functorValues = {
   id: 12345,
   name: "  spongebob stnaperauqs  ",
 };
@@ -54,7 +54,7 @@ function trimReverseString_(str) {
   return `${words[0]} ${words[1].split("").reverse().join("")}`;
 }
 
-// trimReverseString_(values.name);
+// trimReverseString_(functorValues.name);
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -64,7 +64,7 @@ function trimReverseString_(str) {
  * EXERCISE - TWO - HANDLING NULL/UNDEFINED (MAYBE)
  ******************************************************************************/
 
-const values = {
+const maybeValues = {
   null: null,
   string: "",
   empty: [],
@@ -100,11 +100,11 @@ function getHeadPropToDecimal_(arr) {
   return item && item.value ? centToDecimal(item.value) : 0;
 }
 
-// getHeadPropToDecimal_(values.null);
-// getHeadPropToDecimal_(values.string);
-// getHeadPropToDecimal_(values.empty);
-// getHeadPropToDecimal_(values.missing);
-// getHeadPropToDecimal_(values.prices);
+// getHeadPropToDecimal_(maybeValues.null);
+// getHeadPropToDecimal_(maybeValues.string);
+// getHeadPropToDecimal_(maybeValues.empty);
+// getHeadPropToDecimal_(maybeValues.missing);
+// getHeadPropToDecimal_(maybeValues.prices);
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -129,7 +129,7 @@ const getCustomerMeta = (id) => {
 
 // -----------------------------------------------------------------------------
 
-const values = {
+const eitherValues = {
   id: 12345
 };
 
@@ -146,7 +146,7 @@ function getCustomer_(values) {
   }
 }
 
-// getCustomer_(values);
+// getCustomer_(eitherValues);
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -196,7 +196,7 @@ async function getData_() {
   }
 }
 
-getData_();
+// getData_();
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -226,4 +226,4 @@ async function getData() {
 
 }
 
-getData();
+// getData();

@@ -11,8 +11,8 @@ const trace = (x) => {
  * BASIC EXAMPLES
  ******************************************************************************/
 
-const equals = x === y;
-const xEqualsY = R.equals(x, y);
+const isFalse = 'x' === 'y';
+const isStillFalse = R.equals('x', 'y');
 
 const isHello = R.equals('hello');
 const isHelloTrue = isHello('hello');
@@ -35,28 +35,28 @@ const arr = [
   { a: 5, b: 5, c: 5 }
 ];
 // imperative
-arr.find((item) => item.a === 3);
+// arr.find((item) => item.a === 3);
 // declarative
-R.find(R.propEq('a', 3), arr);
+// R.find(R.propEq('a', 3), arr);
 // { a: 3, b: 3, c: 3 }
 
 // -----------------------------------------------------------------------------
 
 const obj = { d: 3, e: 3, f: 3 };
 // imperative
-arr.map((item) => {
-  if (item.a === 3) {
-    return { ...item, ...obj };
-  }
+// arr.map((item) => {
+//   if (item.a === 3) {
+//     return { ...item, ...obj };
+//   }
 
-  return obj;
-});
+//   return obj;
+// });
 // declarative
 const mergeWhen = R.curry((pred, obj, arr) => R.map(R.when(pred, R.mergeLeft(obj)), arr));
 // *****
-mergeWhen(R.propEq('a', 3), obj, arr);
+// mergeWhen(R.propEq('a', 3), obj, arr);
 // { a: 3, b: 3, c: 3, d: 3, e: 3, f: 3 }
-mergeWhen(R.equals(3), obj, arr[2]);
+// mergeWhen(R.equals(3), obj, arr[2]);
 // {
 //   a: { d: 3, e: 3, f: 3 },
 //   b: { d: 3, e: 3, f: 3 },
@@ -113,7 +113,7 @@ function updateFilters(filters = []) {
 }
 
 // has data
-hasFilters(values);
+// hasFilters(values);
 
 /*******************************************************************************
  * COMPOSITION
