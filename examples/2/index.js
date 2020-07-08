@@ -19,6 +19,10 @@ const trace = (x) => {
   return x;
 };
 
+const isFunction = x => typeof x === 'function';
+const isNumber = x => typeof x === 'number';
+const isString = x => typeof x === 'string';
+
 /*******************************************************************************
  * FUNCTORS
  * - Laws
@@ -102,18 +106,13 @@ const Nothing = (x) => ({
   inspect: `Nothing(${x})`,
 });
 
-const getNullOrUndefined = (x) => null;
-const getValue = (x) => x;
+const safe = pred => R.ifElse(pred, M.Maybe.Just, M.Maybe.Nothing);
 
 // M.Maybe.of("hello")
-//   .chain(safe(getNullOrUndefined))
+//   .chain(safe(isString))
 //   .map(x => x + ' world')
 //   .orSome('default value');
 
-const isFunction = x => typeof x === 'function';
-const isString = x => typeof x === 'string';
-
-const safe = pred => R.ifElse(pred, M.Maybe.Just, M.Maybe.Nothing);
 const option = (x) => (maybe) => {
   if(!(maybe && isFunction(maybe.orSome))) {
     throw new TypeError('option: Last argument must be a Maybe');
@@ -129,6 +128,21 @@ const option = (x) => (maybe) => {
 // )
 
 // getName({ name: 'Ben' });
+
+
+// notZero :: a -> Maybe Number
+const notZero = safe(
+  R.both(isNumber, x => x !== 0)
+)
+// safeDivide:: a -> a -> Maybe Number
+const safeDivide = R.curry(
+  (x, y) => R.lift(R.divide)(notZero(x), notZero(y))
+)
+
+// safeDivide(20, 0);
+// //=> Nothing
+// safeDivide(20, 5);
+// //=> Just 4
 
 /*******************************************************************************
  * MONADS - EITHER
