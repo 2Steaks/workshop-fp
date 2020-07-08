@@ -23,7 +23,7 @@ const four = 2 + 2;
 const six = R.add(3, 3);
 
 const add4 = R.add(4);
-const eight = add4(R.add(3, 1));
+const eight = R.add(3, add4(1));
 
 // -----------------------------------------------------------------------------
 
