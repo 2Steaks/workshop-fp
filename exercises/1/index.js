@@ -10,7 +10,7 @@ const trace = (x) => {
 /*******************************************************************************
  * EXERCISES
  * - Hopefully you should get a lego feel from what you do.
- * - Focus on the shaping your inputs to be unary
+ * - Focus on shaping your inputs to unary
  * - Remember to use trace in your compositions
  * - Remember that the imperative has been abstracted away so your FP library will have everything you need
  ******************************************************************************/
@@ -94,3 +94,9 @@ function isOdd_(x) {
 function isEven_(x) {
   return x % 2 !== 1;
 }
+
+// Create remainder function
+
+// Create Equals function
+
+// Compose isOdd and isEven

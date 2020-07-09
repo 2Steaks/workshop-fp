@@ -108,26 +108,10 @@ function isEven_(x) {
   return x % 2 !== 1;
 }
 
-// function mod(y) {
-//   return function forX(x) {
-//     return x % y;
-//   }
-// }
-
-// function eq(y) {
-//   return function forX(x) {
-//     return x === y;
-//   }
-// }
-
-// const mod2 = mod(2);
-// const eq1 = eq(1);
-
-// function isOddNested(x) {
-//   return eq1(mod2(x));
-// }
-
-// isOddNested(3);
-
-const isOdd = R.pipe(R.modulo(R.__, 2), R.equals(1));
+// Create remainder function
+const mod = R.curry((a, b) => b % a);
+// Create Equals function
+const eq = R.curry((a, b) => a === b);
+// Compose isOdd and isEven
+const isOdd = R.pipe(mod(2), eq(1));
 const isEven = R.complement(isOdd);

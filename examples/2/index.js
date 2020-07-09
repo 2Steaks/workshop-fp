@@ -24,6 +24,16 @@ const isNumber = x => typeof x === 'number';
 const isString = x => typeof x === 'string';
 
 /*******************************************************************************
+ * TODAY
+ ******************************************************************************/
+// - Diving deeper into FP 🏊‍♂️
+// - Control flow 🛤
+// - Error handling 💣
+// - Containing impurity 📦
+// - Use Monads 🧙‍♂️
+// - Running through some exerices 🏋️‍♂️
+
+/*******************************************************************************
  * FUNCTORS
  * - Laws
  * - Identity, which means to return itself, in this case, another functor
