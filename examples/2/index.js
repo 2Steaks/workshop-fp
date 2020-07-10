@@ -46,7 +46,16 @@ const isString = x => typeof x === 'string';
  * - Getting slightly heavier into FP world
  ******************************************************************************/
 
-//[{ isFunctor: true }].map((x) => x);
+// The Array can be considered a Functor because of it's map function
+// In this case, Array is the context, and x is the value we're mapping over.
+const x = 20;             // Some data of type `a`
+const f = n => n * 2;     // A function from `a` to `b`
+const arr = Array.of(x);  // The type lift.
+// JS has type lift sugar for arrays: [x]
+// .map() applies the function f to the value x
+// in the context of the array.
+const result = arr.map(f); // [40]
+
 
 // Otherwise known as Identity
 const Box = (x) => ({
@@ -75,11 +84,32 @@ Box.of = Box;
  * - Just be aware of them
  ******************************************************************************/
 
-// const promiseMe = new Promise((res, rej) => res({ isLikeMonad: true }))
-//   .then(x)
-//   .then(y)
-//   .then(z);
+// A monad is a way of composing functions that require context in addition to 
+// the return value, such as computation, branching, or I/O.
 
+// The point of functors and monads is to abstract that context away so we don’t 
+// have to worry about it while we’re composing things.
+
+
+// The closest thing we have to a Monad is the Promise
+const whereMyData = x => Promise.resolve(x);
+// Notice out value is still stuck inside the context of a Promise
+// whereMyData(20) // Promise(20)
+
+// To get at the data/error we need to add our then/catch
+new Promise((res, rej) => res(1))
+  // Maps the value
+  .then((x) => x + 1)
+  // Automatically knows how to handle another Promise and flattens the promise to 4
+  .then((y) => new Promise((res, rej) => res(y * 2)))
+  // Automatically flattens the promise to 8
+  .then((z) => new Promise((res, rej) => res(z * 2)))
+  // 8
+  .then(console.log) 
+  .catch((error) => error);
+
+
+// A basic example
 function couldReturnSomething_(prop) {
   if (!prop) {
     return;
@@ -91,10 +121,12 @@ function couldReturnSomething_(prop) {
   return bar && toBuzz(bar);
 }
 
-// const couldReturnSomething = prop => Maybe.of(prop)
-//   .chain(toFoo)
-//   .chain(toBar)
-//   .chain(toBuzz);
+// Composition can continue or we can fold out to the raw value
+const couldReturnSomething = prop => Maybe.of(prop)
+  .chain(toFoo) // returns a Maybe (Just/Nothing)
+  .chain(toBar) // returns a Maybe (Just/Nothing)
+  .chain(toBuzz) // returns a Maybe (Just/Nothing)
+  .fold();
 
 /*******************************************************************************
  * MONADS - MAYBE
