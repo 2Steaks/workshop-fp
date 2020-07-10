@@ -91,8 +91,8 @@ const createNewBananas = (bananas) => ({ ...bananas, count: bananas.count + 1 })
 // -----------------------------------------------------------------------------
 
 // Associativity - Pure functions with the same input/output shape are associative
-((1 + 2) + 3) === (1 + (2 + 3));
-R.add(R.add(1, 2), 3) === R.add(1, R.add(2, 3));
+// ((1 + 2) + 3) === (1 + (2 + 3));
+// R.add(R.add(1, 2), 3) === R.add(1, R.add(2, 3));
 
 // -----------------------------------------------------------------------------
 
@@ -142,7 +142,7 @@ const composeA = (x) => f(g(x));
 // first class functions = treat functions like any other data type
 const composeB = R.compose(f, g);
 // composition is associative, as long as the order is respected.
-R.compose(R.compose(f, g), h) === R.compose(f, R.compose(g, h));
+// R.compose(R.compose(f, g), h) === R.compose(f, R.compose(g, h));
 
 // -----------------------------------------------------------------------------
 
