@@ -227,7 +227,7 @@ getData_();
 // https://folktale.origamitower.com/api/v2.3.0/en/folktale.concurrency.task.html
 // Using the above documentation reimplement getData_
 const request = (ms, data) => null;
-const requestFail = (ms) => null
+const requestFail = (ms, error) => null
 
 
 // pure functions
