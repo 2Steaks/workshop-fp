@@ -424,19 +424,19 @@ function convertKeyNames_(object: any, convert: (name: string) => string): any {
 // convertKeyNames_(convertObj, camelCase);
 
 // 1st attempt
-// const convertKeyNames = (fn, obj) => {
+// const convertKeyNamesOld = (fn, obj) => {
 //   const reduceKey = (acc, [key, value]) => ({...acc, [fn(key)]: convertKeyNames(fn, value) });
 //   const reducePairs = R.pipe(R.toPairs, R.reduce(reduceKey, {}));
 
 //   return R.ifElse(Array.isArray, R.map(reducePairs), reducePairs)(obj);
 // };
 
-// convertKeyNames(camelCase, convertObj);
+// convertKeyNamesOld(camelCase, convertObj);
 
 // 2nd attempt higher order function with inverted control
 // const reduceNodes = (fn) => {
 //   const reducer = (acc, [key, value]) => ({ ...acc, ...fn(key, value) });
-//   const reducePairs = R.pipe(R.toPairs, R.reduce(reduceKey, {}));
+//   const reducePairs = R.pipe(R.toPairs, R.reduce(reducer, {}));
 
 //   return R.ifElse(Array.isArray, R.map(reducePairs), reducePairs);
 // };
