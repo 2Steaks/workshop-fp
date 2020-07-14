@@ -45,6 +45,7 @@ function trimReverseSurname_(str) {
 
 // trimReverseString_(valuesA.name);
 
+// -----------------------------------------------------------------------------
 
 // Use a Functor to replace the above implementation
 const trim = (x) => x.trim();
@@ -113,6 +114,8 @@ function getHeadPropToDecimal_(arr) {
 // getHeadPropToDecimal_(valuesB.missing);
 // getHeadPropToDecimal_(valuesB.prices);
 
+// -----------------------------------------------------------------------------
+
 // Use a Maybe to replace the above implementation
 const divide = (x) => (y) => x / y;
 
@@ -132,8 +135,8 @@ const getHeadPropToDecimalA = (x) => M.Maybe.fromEmpty(x)
 // getHeadPropToDecimalA(valuesB.missing).orJust(0);
 // getHeadPropToDecimalA(valuesB.prices).orJust(0);
 
-// -----------------------------------------------------------------------------
 
+// VERSION 2
 // Maybe utils
 const safe = pred => x => pred(x) ? M.Maybe.Just(x) : M.Maybe.Nothing();
 const safeAfter = (pred, fn) => pipe(fn, safe(pred));
@@ -175,8 +178,6 @@ const getCustomerMeta = (id) => {
   };
 };
 
-// -----------------------------------------------------------------------------
-
 const valuesC = {
   id: 12345
 };
@@ -195,6 +196,8 @@ function getCustomer_(values) {
 }
 
 // getCustomer_(valuesC);
+
+// -----------------------------------------------------------------------------
 
 // Use an Either to replace the above implementation
 
@@ -239,8 +242,6 @@ const responseThree = {
 //   baz: { beep: false, boop: false, fizz: true }
 // }
 
-// -----------------------------------------------------------------------------
-
 const request_ = (ms, data) =>
   new Promise((resolve) => {
     setTimeout(() => resolve(data), ms);
@@ -283,6 +284,7 @@ const request_ = (ms, data) =>
 
 // getData_();
 
+// -----------------------------------------------------------------------------
 
 // https://folktale.origamitower.com/api/v2.3.0/en/folktale.concurrency.task.html
 // Use a Task to replace the above implementation
@@ -328,7 +330,6 @@ const fetchAll = Task.waitAll([
   .map(trace)
   .map(mergeAll);
 
-// -----------------------------------------------------------------------------
 
 // component
 function getData() {

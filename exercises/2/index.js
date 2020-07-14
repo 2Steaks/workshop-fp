@@ -14,14 +14,6 @@ const trace = (x) => {
 const pipe = (...fns) => (arg) =>
   fns.reduce((accumulator, fn) => fn(accumulator), arg);
 
-const Identity = (x) => ({
-  map: (f) => Identity.of(f(x)),
-  fold: (f) => f(x),
-  inspect: `Identity(${JSON.stringify(x)})`,
-});
-
-Identity.of = Identity;
-
 /*******************************************************************************
  * EXERCISES
  * - Remember that monads expect another monad to change application flow
@@ -45,8 +37,10 @@ function trimReverseSurname_(str) {
 
 // trimReverseString_(valuesA.name);
 
+// -----------------------------------------------------------------------------
 
 // Use a Functor to replace the above implementation
+
 const trim = (x) => x.trim();
 const split = (match) => (x) => x.split(match);
 const reverse = (x) => x.reverse();
@@ -58,6 +52,16 @@ const adjust = (index, fn) => (arr) => {
   list[index] = fn(list[index]);
   return list;
 };
+
+
+const Identity = (x) => ({
+  map: (f) => Identity.of(f(x)),
+  fold: (f) => f(x),
+  inspect: `Identity(${JSON.stringify(x)})`,
+});
+
+Identity.of = Identity;
+
 // Your Functor function
 const trimReverseSurname = (x) => null;
 
@@ -109,6 +113,8 @@ function getHeadPropToDecimal_(arr) {
 // getHeadPropToDecimal_(valuesB.missing);
 // getHeadPropToDecimal_(valuesB.prices);
 
+// -----------------------------------------------------------------------------
+
 // Use a Maybe to replace the above implementation
 const divide = (x) => (y) => x / y;
 
@@ -142,8 +148,6 @@ const getCustomerMeta = (id) => {
   };
 };
 
-// -----------------------------------------------------------------------------
-
 const valuesC = {
   id: 12345
 };
@@ -162,6 +166,8 @@ function getCustomer_(values) {
 }
 
 // getCustomer_(valuesC);
+
+// -----------------------------------------------------------------------------
 
 // Use an Either to replace the above implementation
 
@@ -235,6 +241,7 @@ async function getData_() {
 
 getData_();
 
+// -----------------------------------------------------------------------------
 
 // https://folktale.origamitower.com/api/v2.3.0/en/folktale.concurrency.task.html
 // Use a Task to replace the above implementation
@@ -266,7 +273,6 @@ const requestC = request(500, responseThree);
 
 const fetchAll = null;
 
-// -----------------------------------------------------------------------------
 
 // component (DO NOT TOUCH)
 function getData() {
