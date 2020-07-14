@@ -1,8 +1,5 @@
 // https://ramdajs.com/
 // https://github.com/ramda/ramda/wiki/Cookbook
-import R from "ramda";
-// https://ramdajs.com/
-// https://github.com/ramda/ramda/wiki/Cookbook
 import M from "monet";
 // https://folktale.origamitower.com/
 // https://folktale.origamitower.com/api/v2.0.0/en/folktale.concurrency.task.html
@@ -16,14 +13,6 @@ const trace = (x) => {
 // Compose functions
 const pipe = (...fns) => (arg) =>
   fns.reduce((accumulator, fn) => fn(accumulator), arg);
-
-// Update array at index
-const adjust = (index, fn) => (arr) => {
-  const list = [...arr];
-  list[index] = fn(list[index]);
-
-  return list;
-};
 
 const Identity = (x) => ({
   map: (f) => Identity.of(f(x)),
@@ -47,7 +36,7 @@ const values = {
   name: "  spongebob stnaperauqs  ",
 };
 
-function trimReverseString_(str) {
+function trimReverseSurname_(str) {
   const trimmed = str.trim();
   const words = trimmed.split(" ");
 
@@ -56,23 +45,27 @@ function trimReverseString_(str) {
 
 // trimReverseString_(values.name);
 
-////////////////////////////////////////////////////////////////////////////////
 
+// Use a Functor to replace the above implementation
 const trim = (x) => x.trim();
 const split = (match) => (x) => x.split(match);
 const reverse = (x) => x.reverse();
 const join = (str) => (x) => x.join(str);
-
 const reverseText = pipe(split(""), reverse, join(""));
+// Update array at index
+const adjust = (index, fn) => (arr) => {
+  const list = [...arr];
+  list[index] = fn(list[index]);
+  return list;
+};
+// Your Functor function
+const trimReverseSurname = (x) => Identity.of(x)
+  .map(trim)
+  .map(split(" "))
+  .map(adjust(1, reverseText))
+  .fold(join(" "));
 
-const trimReverseString = (x) =>
-  Identity.of(x)
-    .map(trim)
-    .map(split(" "))
-    .map(adjust(1, reverseText))
-    .fold(join(" "));
-
-// trimReverseString(values.name);
+// trimReverseSurname(values.name);
 
 /*******************************************************************************
  * EXERCISE - TWO - HANDLING NULL/UNDEFINED (MAYBE)
@@ -120,43 +113,41 @@ function getHeadPropToDecimal_(arr) {
 // getHeadPropToDecimal_(values.missing);
 // getHeadPropToDecimal_(values.prices);
 
-////////////////////////////////////////////////////////////////////////////////
+// Use a Maybe to replace the above implementation
 
+// Create a safe head function using a Maybe (Just/Nothing)
 const safeHead = (arr) => Array.isArray(arr) && arr[0] ? M.Maybe.Just(arr[0]) : M.Maybe.Nothing();
+// Create a safe prop function using a Maybe (Just/Nothing)
 const safeProp = (x) => (obj) => obj[x] ? M.Maybe.Just(obj[x]) : M.Maybe.Nothing();
 
-const divide = (x) => (y) => y / x;
-const divideBy100 = divide(100);
+const getHeadPropToDecimal = (x) => M.Maybe.fromEmpty(x)
+  .chain(safeHead)
+  .chain(safeProp("value"))
+  .map(R.divide(100));
 
-const getHeadPropToDecimal = (x) =>
-  M.Maybe.fromEmpty(x)
-    .chain(safeHead)
-    .chain(safeProp("value"))
-    .map(divideBy100);
+// getHeadPropToDecimal(values.null).orJust(0);
+// getHeadPropToDecimal(values.string).orJust(0);
+// getHeadPropToDecimal(values.empty).orJust(0);
+// getHeadPropToDecimal(values.missing).orJust(0);
+// getHeadPropToDecimal(values.prices).orJust(0);
 
 // -----------------------------------------------------------------------------
 
 // Maybe utils
 const safe = pred => x => pred(x) ? M.Maybe.Just(x) : M.Maybe.Nothing();
-const safeAfter = (pred, fn) => pipe(fn, safe(pred));
+const safeAfter = (pred, fn) => R.pipe(fn, safe(pred));
 // Type checking
 const isObject = x => typeof x === 'object' && !Array.isArray(x);
 const isNumber = x => typeof x === 'number' && !isNaN(x);
 // Logic
-const head = x => x[0];
-const prop = x => obj => obj[x];
-const divide = (x) => (y) => y / x;
+const safeHead = safeAfter(isObject, R.head);
+const safeProp = x => safeAfter(isNumber, R.prop(x));
 
-const divideBy100 = divide(100);
-const safeHead = safeAfter(isObject, head);
-const safeProp = x => safeAfter(isNumber, prop(x));
-
-const getHeadPropToDecimal = (x) =>
-  M.Maybe.fromEmpty(x)
-    .chain(safe(Array.isArray))
-    .chain(safeHead)
-    .chain(safeProp('value'))
-    .map(divideBy100);
+const getHeadPropToDecimal = (x) => M.Maybe.fromEmpty(x)
+  .chain(safe(Array.isArray))
+  .chain(safeHead)
+  .chain(safeProp('value'))
+  .map(R.divide(100));
 
 // getHeadPropToDecimal(values.null).orJust(0);
 // getHeadPropToDecimal(values.string).orJust(0);
@@ -170,7 +161,7 @@ const getHeadPropToDecimal = (x) =>
 
 const getCustomerMeta = (id) => {
   if (!id) {
-    throw `failed id was missing`;
+    throw `ID is missing`;
   }
 
   return {
@@ -188,8 +179,8 @@ const values = {
 };
 
 function getCustomer_(values) {
-  if (!values.id) {
-    console.log('ID was missing');
+  if (!values) {
+    console.log('No data');
     return;
   }
 
@@ -202,12 +193,13 @@ function getCustomer_(values) {
 
 // getCustomer_(values);
 
-////////////////////////////////////////////////////////////////////////////////
+// Use an Either to replace the above implementation
 
+// Create a safe prop function using an Either
 const getProp = (x) => (obj) => !obj[x] 
   ? M.Either.Left(`${x} is required`) 
   : M.Either.Right(obj[x]);
-
+// Create a try/catch function using an Either
 const tryCatch = (fn) => (x) =>  {  
   try {
     return M.Either.Right(fn(x));
@@ -220,7 +212,10 @@ const getCustomer = (x) => M.Either.of(x)
   .chain(getProp("id"))
   .chain(tryCatch(getCustomerMeta));
 
-// getCustomer(values).fold(x => x, x => x);
+// getCustomer(values).fold(
+//   x => x,
+//   x => x
+// );
 
 /*******************************************************************************
  * EXERCISE - FOUR - BRIGHT FUTURES (ASYNC)
@@ -286,7 +281,9 @@ const requestFail = (ms) => Task.task((resolver) => {
   });
 });
 
-////////////////////////////////////////////////////////////////////////////////
+
+// https://folktale.origamitower.com/api/v2.3.0/en/folktale.concurrency.task.html
+// Using the above documentation reimplement getData_
 
 // pure functions
 const requestA = request(100, responseOne).map(x => x.data);
@@ -310,4 +307,4 @@ async function getData() {
   }
 }
 
-getData();
+// getData();

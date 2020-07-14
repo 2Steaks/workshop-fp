@@ -24,9 +24,13 @@ We are going to be taking a look at these principles and seeing how we can fit i
 * Encourage the team to start using function composition
 
 ## What to Bring
-* Install Runjs with ramda - https://runjs.dev/
-* Keep ramda docs open - https://ramdajs.com/
-* Bring functions that are inflexible or hard to read
+* Install Runjs https://runjs.dev/ with the list below:
+    * ramda
+    * axios
+    * monet
+    * fluture
+    * folktale
+    * fun-task
 
 ## Suggested Learning
 * https://frontendmasters.com/courses/functional-javascript-v3/why-functional-programming/

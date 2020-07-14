@@ -1,8 +1,5 @@
 // https://ramdajs.com/
 // https://github.com/ramda/ramda/wiki/Cookbook
-import R from "ramda";
-// https://ramdajs.com/
-// https://github.com/ramda/ramda/wiki/Cookbook
 import M from "monet";
 // https://folktale.origamitower.com/
 // https://folktale.origamitower.com/api/v2.0.0/en/folktale.concurrency.task.html
@@ -16,14 +13,6 @@ const trace = (x) => {
 // Compose functions
 const pipe = (...fns) => (arg) =>
   fns.reduce((accumulator, fn) => fn(accumulator), arg);
-
-// Update array at index
-const adjust = (index, fn) => (arr) => {
-  const list = [...arr];
-  list[index] = fn(list[index]);
-
-  return list;
-};
 
 const Identity = (x) => ({
   map: (f) => Identity.of(f(x)),
@@ -42,29 +31,43 @@ Identity.of = Identity;
  * EXERCISE - ONE - THE BASE (FUNCTOR)
  ******************************************************************************/
 
-const functorValues = {
+const values = {
   id: 12345,
   name: "  spongebob stnaperauqs  ",
 };
 
-function trimReverseString_(str) {
+function trimReverseSurname_(str) {
   const trimmed = str.trim();
   const words = trimmed.split(" ");
 
   return `${words[0]} ${words[1].split("").reverse().join("")}`;
 }
 
-// trimReverseString_(functorValues.name);
-
-////////////////////////////////////////////////////////////////////////////////
+// trimReverseString_(values.name);
 
 
+// Use a Functor to replace the above implementation
+const trim = (x) => x.trim();
+const split = (match) => (x) => x.split(match);
+const reverse = (x) => x.reverse();
+const join = (str) => (x) => x.join(str);
+const reverseText = pipe(split(""), reverse, join(""));
+// Update array at index
+const adjust = (index, fn) => (arr) => {
+  const list = [...arr];
+  list[index] = fn(list[index]);
+  return list;
+};
+// Your Functor function
+const trimReverseSurname = (x) => null;
+
+// trimReverseSurname(values.name);
 
 /*******************************************************************************
  * EXERCISE - TWO - HANDLING NULL/UNDEFINED (MAYBE)
  ******************************************************************************/
 
-const maybeValues = {
+const values = {
   null: null,
   string: "",
   empty: [],
@@ -100,15 +103,26 @@ function getHeadPropToDecimal_(arr) {
   return item && item.value ? centToDecimal(item.value) : 0;
 }
 
-// getHeadPropToDecimal_(maybeValues.null);
-// getHeadPropToDecimal_(maybeValues.string);
-// getHeadPropToDecimal_(maybeValues.empty);
-// getHeadPropToDecimal_(maybeValues.missing);
-// getHeadPropToDecimal_(maybeValues.prices);
+// getHeadPropToDecimal_(values.null);
+// getHeadPropToDecimal_(values.string);
+// getHeadPropToDecimal_(values.empty);
+// getHeadPropToDecimal_(values.missing);
+// getHeadPropToDecimal_(values.prices);
 
-////////////////////////////////////////////////////////////////////////////////
+// Use a Maybe to replace the above implementation
 
+// Create a safe head function using a Maybe (Just/Nothing)
+const safeHead = (arr) => null;
+// Create a safe prop function using a Maybe (Just/Nothing)
+const safeProp = (x) => (obj) => null;
+// Your Maybe function
+const getHeadPropToDecimal = (x) => null;
 
+// getHeadPropToDecimal(values.null).orJust(0);
+// getHeadPropToDecimal(values.string).orJust(0);
+// getHeadPropToDecimal(values.empty).orJust(0);
+// getHeadPropToDecimal(values.missing).orJust(0);
+// getHeadPropToDecimal(values.prices).orJust(0);
 
 /*******************************************************************************
  * EXERCISE - THREE - TRAIN TRACKS (EITHER)
@@ -116,7 +130,7 @@ function getHeadPropToDecimal_(arr) {
 
 const getCustomerMeta = (id) => {
   if (!id) {
-    throw `failed id was missing`;
+    throw `ID is missing`;
   }
 
   return {
@@ -129,13 +143,13 @@ const getCustomerMeta = (id) => {
 
 // -----------------------------------------------------------------------------
 
-const eitherValues = {
+const values = {
   id: 12345
 };
 
 function getCustomer_(values) {
-  if (!values.id) {
-    console.log('ID was missing');
+  if (!values) {
+    console.log('No data');
     return;
   }
 
@@ -146,11 +160,21 @@ function getCustomer_(values) {
   }
 }
 
-// getCustomer_(eitherValues);
+// getCustomer_(values);
 
-////////////////////////////////////////////////////////////////////////////////
+// Use an Either to replace the above implementation
 
+// Create a safe prop function using an Either
+const getProp = (x) => (obj) => null;
+// Create a try/catch function using an Either
+const tryCatch = (fn) => (x) => null;
+// Your Either function
+const getCustomer = (x) => null;
 
+// getCustomer(values).fold(
+//   x => x,
+//   x => x
+// );
 
 /*******************************************************************************
  * EXERCISE - FOUR - BRIGHT FUTURES (ASYNC)
@@ -196,9 +220,9 @@ async function getData_() {
   }
 }
 
-// getData_();
+getData_();
 
-////////////////////////////////////////////////////////////////////////////////
+// -----------------------------------------------------------------------------
 
 const request = (ms, data) => Task.task((resolver) => {
   const timerId = setTimeout(() => resolver.resolve(data), ms);
@@ -217,13 +241,27 @@ const requestFail = (ms) => Task.task((resolver) => {
 });
 
 
+// https://folktale.origamitower.com/api/v2.3.0/en/folktale.concurrency.task.html
+// Using the above documentation reimplement getData_
+
 // pure functions
+const requestA = null;
+const requestB = null;
+const requestC = null;
+const mergeAll = xs => xs.reduce((acc, next) => ({ ...acc, ...next }), {});
+
+const fetchAll = null;
 
 // -----------------------------------------------------------------------------
 
 // component
 async function getData() {
-
+  try {
+    const result = await fetchAll.run().promise();
+    console.log(result);
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 // getData();
