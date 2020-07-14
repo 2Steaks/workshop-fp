@@ -239,7 +239,7 @@ const halfEven = (x) =>
 //   .chain(halfEven)
 //   .chain(halfEven)
 //   //.chain(halfEven)
-//   .map(x => x * 10)
+//   .map(x => x + 1)
 //   .fold(x => x, x => x);
 
 
@@ -312,10 +312,10 @@ const fetchGoogle = FaxiosGet("https://www.google.co.uk/")
 // react component
 const successFn = (x) => console.log(x);
 const failureFn = (error) => console.error(error);
-//const unsubscribe = Future.fork(failureFn)(successFn)(flutureDelay(1500));
+//const unsubscribeF = Future.fork(failureFn)(successFn)(flutureDelay(1500));
 
 // Returns cancel action
-// unsubscribe();
+// unsubscribeF();
 
 // 
 // async/await style
@@ -383,7 +383,7 @@ const funTaskDelay = (ms) => FunTask.create((res) => {
   return () => clearTimeout(id);
 })
 
-// const unsubscribe = funTaskDelay.run({
+// const unsubscribeFT = funTaskDelay(500).run({
 //   success(x) {
 //     console.log(x)
 //   }, 
@@ -392,7 +392,7 @@ const funTaskDelay = (ms) => FunTask.create((res) => {
 //   }
 // })
 
-// unsubscribe();
+// unsubscribeFT();
 
 async function funTaskToPromise() {
   const response = await funTaskDelay(1000).toPromise();
