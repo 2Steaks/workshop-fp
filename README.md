@@ -40,3 +40,4 @@ We are going to be taking a look at these principles and seeing how we can fit i
 
 # Resources
 * https://github.com/stoeffel/awesome-fp-js
+* https://github.com/hemanth/functional-programming-jargon

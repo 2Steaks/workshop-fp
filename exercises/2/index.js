@@ -179,9 +179,13 @@ const getCustomer = (x) => null;
 /*******************************************************************************
  * EXERCISE - FOUR - BRIGHT FUTURES (ASYNC)
  ******************************************************************************/
-
-const responseOne = { data: { foo: { zip: true, pop: false, bang: true } } };
-const responseTwo = { data: { bar: { wiz: true, pow: true, zop: true } } };
+const responseFail = { message: 'something went wrong' };
+const responseOne = { 
+  data: { foo: { zip: true, pop: false, bang: true } }
+};
+const responseTwo = { 
+  data: { bar: { wiz: true, pow: true, zop: true } }
+};
 const responseThree = {
   data: { baz: { beep: false, boop: false, fizz: true } },
 };
@@ -211,12 +215,24 @@ async function getData_() {
     ]);
 
     console.log(responses);
+    
+    // Flatten result
     const result = responses.reduce((acc, next) => {
         return {...acc, ...next.data};
     }, {});
+    
     console.log(result);
+
+    return result;
   } catch (error) {
     console.log(error);
+
+    // Return default values
+    return {
+      foo: {},
+      bar: {},
+      baz: {}
+    }
   }
 }
 
@@ -225,16 +241,31 @@ getData_();
 // -----------------------------------------------------------------------------
 
 // https://folktale.origamitower.com/api/v2.3.0/en/folktale.concurrency.task.html
-// Using the above documentation reimplement getData_
-const request = (ms, data) => null;
-const requestFail = (ms, error) => null
+// Use a Task to replace the above implementation
+const mergeAll = xs => xs.reduce((acc, next) => ({ ...acc, ...next }), {});
 
+const request = (ms, data) => Task.task((resolver) => {
+  const timerId = setTimeout(() => resolver.resolve(data), ms);
+
+  resolver.cleanup(() => {
+      clearTimeout(timerId)
+  });
+});
+
+const requestFail = (ms, error) => Task.task((resolver) => {
+  const timerId = setTimeout(() => resolver.reject(error), ms);
+
+  resolver.cleanup(() => {
+      clearTimeout(timerId)
+  });
+});
 
 // pure functions
-const requestA = null;
-const requestB = null;
-const requestC = null;
-const mergeAll = xs => xs.reduce((acc, next) => ({ ...acc, ...next }), {});
+const requestA = request(100, responseOne);
+
+const requestB = request(1500, responseTwo);
+  
+const requestC = request(500, responseThree);
 
 const fetchAll = null;
 
@@ -243,8 +274,7 @@ const fetchAll = null;
 // component
 async function getData() {
   try {
-    const result = await fetchAll.run().promise();
-    console.log(result);
+    return await fetchAll.run().promise();
   } catch (error) {
     console.log(error);
   }

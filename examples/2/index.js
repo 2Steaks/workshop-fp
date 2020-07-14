@@ -36,6 +36,27 @@ const isString = x => typeof x === 'string';
 
 
 /*******************************************************************************
+ * SOME FP LINGO
+ ******************************************************************************/
+
+// - A SemiGroup concats 
+// - A Monoid is a SemiGroup that also has an assigned empty value (identity)
+// - A Functor maps
+// - A Monad is "a monoid in the category of endofunctors" (this has become a running joke in the FP world)
+//   - is a Functor that can also chain (unwrap nested context)
+
+// There are more, but this was to illustrate the meaning behind the ridiculous
+// names. We however, will be focusing on only Functors and Monads.
+
+// This might help: https://github.com/hemanth/functional-programming-jargon
+
+// You should know that the examples you're about to see arn't just pretty APIs,
+// they are founded in mathematics and won't change between implementations.
+// The JS FP spec can be found here: https://github.com/fantasyland/fantasy-land
+// All libraries based on FP will attempt to abide (some may deviate) by the rules in this repo.
+// See https://github.com/ramda/ramda/blob/v0.27.0/source/map.js line: 12
+
+/*******************************************************************************
  * FUNCTORS
  * - They have laws
  *  - Functors must preserve identity morphisms (returns a context of the same type)
@@ -44,7 +65,6 @@ const isString = x => typeof x === 'string';
  * - They are dot chainable
  * - Abstraction of function application (we dont call the funtions we're getting BOX to call it for us) this becomes more important later
  * - Building block to other implementations
- * - These arn't just pretty APIs they are founded in mathematics and won't change between implementations
  ******************************************************************************/
 
 // What the Functor?

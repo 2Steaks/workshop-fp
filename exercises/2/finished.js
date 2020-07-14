@@ -220,13 +220,16 @@ const getCustomer = (x) => M.Either.of(x)
 /*******************************************************************************
  * EXERCISE - FOUR - BRIGHT FUTURES (ASYNC)
  ******************************************************************************/
-
-const responseOne = { data: { foo: { zip: true, pop: false, bang: true } } };
-const responseTwo = { data: { bar: { wiz: true, pow: true, zop: true } } };
+const responseFail = { message: 'something went wrong' };
+const responseOne = { 
+  data: { foo: { zip: true, pop: false, bang: true } }
+};
+const responseTwo = { 
+  data: { bar: { wiz: true, pow: true, zop: true } }
+};
 const responseThree = {
   data: { baz: { beep: false, boop: false, fizz: true } },
 };
-
 // {
 //   foo: { zip: true, pop: false, bang: true },
 //   bar: { wiz: true, pow: true, zop: true },
@@ -243,27 +246,43 @@ const requestFail_ = (ms, error) =>
     setTimeout(() => reject(error), ms);
   });
 
-async function getData_() {
-  try {
-    const responses = await Promise.all([
-      request_(100, responseOne),
-      request_(1500, responseTwo),
-      request_(500, responseThree),
-    ]);
-
-    console.log(responses);
-    const result = responses.reduce((acc, next) => {
-        return {...acc, ...next.data};
-    }, {});
-    console.log(result);
-  } catch (error) {
-    console.log(error);
+  async function getData_() {
+    try {
+      const responses = await Promise.all([
+        request_(100, responseOne),
+        request_(1500, responseTwo),
+        request_(500, responseThree),
+      ]);
+  
+      console.log(responses);
+      
+      // Flatten result
+      const result = responses.reduce((acc, next) => {
+          return {...acc, ...next.data};
+      }, {});
+      
+      console.log(result);
+  
+      return result;
+    } catch (error) {
+      console.log(error);
+  
+      // Return default values
+      return {
+        foo: {},
+        bar: {},
+        baz: {}
+      }
+    }
   }
-}
 
 getData_();
 
 // -----------------------------------------------------------------------------
+
+// https://folktale.origamitower.com/api/v2.3.0/en/folktale.concurrency.task.html
+// Use a Task to replace the above implementation
+const mergeAll = xs => xs.reduce((acc, next) => ({ ...acc, ...next }), {});
 
 const request = (ms, data) => Task.task((resolver) => {
   const timerId = setTimeout(() => resolver.resolve(data), ms);
@@ -281,15 +300,18 @@ const requestFail = (ms) => Task.task((resolver) => {
   });
 });
 
-
-// https://folktale.origamitower.com/api/v2.3.0/en/folktale.concurrency.task.html
-// Using the above documentation reimplement getData_
-
 // pure functions
-const requestA = request(100, responseOne).map(x => x.data);
-const requestB = request(100, responseTwo).map(x => x.data);
-const requestC = request(100, responseThree).map(x => x.data);
-const mergeAll = xs => xs.reduce((acc, next) => ({ ...acc, ...next }), {});
+const requestA = request(100, responseOne)
+  .map(x => x.data)
+  .orElse(reason => Task.of({ foo: {} }));
+
+const requestB = request(1500, responseTwo)
+  .map(x => x.data)
+  .orElse(reason => Task.of({ bar: {} }));
+  
+const requestC = request(500, responseThree)
+  .map(x => x.data)
+  .orElse(reason => Task.of({ baz: {} }));
 
 const fetchAll = Task.waitAll([requestA, requestB, requestC])
   .map(trace)
