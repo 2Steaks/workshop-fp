@@ -224,25 +224,11 @@ getData_();
 
 // -----------------------------------------------------------------------------
 
-const request = (ms, data) => Task.task((resolver) => {
-  const timerId = setTimeout(() => resolver.resolve(data), ms);
-
-  resolver.cleanup(() => {
-      clearTimeout(timerId)
-  });
-});
-
-const requestFail = (ms) => Task.task((resolver) => {
-  const timerId = setTimeout(() => resolver.reject(ms), ms);
-
-  resolver.cleanup(() => {
-      clearTimeout(timerId)
-  });
-});
-
-
 // https://folktale.origamitower.com/api/v2.3.0/en/folktale.concurrency.task.html
 // Using the above documentation reimplement getData_
+const request = (ms, data) => null;
+const requestFail = (ms) => null
+
 
 // pure functions
 const requestA = null;
