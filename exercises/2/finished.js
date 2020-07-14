@@ -6,7 +6,7 @@ import M from "monet";
 import Task from "folktale/concurrency/task";
 
 const trace = (x) => {
-  console.log(JSON.stringify(x));
+  console.log(x);
   return x;
 };
 
@@ -31,7 +31,7 @@ Identity.of = Identity;
  * EXERCISE - ONE - THE BASE (FUNCTOR)
  ******************************************************************************/
 
-const values = {
+const valuesA = {
   id: 12345,
   name: "  spongebob stnaperauqs  ",
 };
@@ -43,7 +43,7 @@ function trimReverseSurname_(str) {
   return `${words[0]} ${words[1].split("").reverse().join("")}`;
 }
 
-// trimReverseString_(values.name);
+// trimReverseString_(valuesA.name);
 
 
 // Use a Functor to replace the above implementation
@@ -65,13 +65,13 @@ const trimReverseSurname = (x) => Identity.of(x)
   .map(adjust(1, reverseText))
   .fold(join(" "));
 
-// trimReverseSurname(values.name);
+// trimReverseSurname(valuesA.name);
 
 /*******************************************************************************
  * EXERCISE - TWO - HANDLING NULL/UNDEFINED (MAYBE)
  ******************************************************************************/
 
-const values = {
+const valuesB = {
   null: null,
   string: "",
   empty: [],
@@ -107,53 +107,56 @@ function getHeadPropToDecimal_(arr) {
   return item && item.value ? centToDecimal(item.value) : 0;
 }
 
-// getHeadPropToDecimal_(values.null);
-// getHeadPropToDecimal_(values.string);
-// getHeadPropToDecimal_(values.empty);
-// getHeadPropToDecimal_(values.missing);
-// getHeadPropToDecimal_(values.prices);
+// getHeadPropToDecimal_(valuesB.null);
+// getHeadPropToDecimal_(valuesB.string);
+// getHeadPropToDecimal_(valuesB.empty);
+// getHeadPropToDecimal_(valuesB.missing);
+// getHeadPropToDecimal_(valuesB.prices);
 
 // Use a Maybe to replace the above implementation
+const divide = (x) => (y) => x / y;
 
 // Create a safe head function using a Maybe (Just/Nothing)
-const safeHead = (arr) => Array.isArray(arr) && arr[0] ? M.Maybe.Just(arr[0]) : M.Maybe.Nothing();
+const safeHeadA = (arr) => Array.isArray(arr) && arr[0] ? M.Maybe.Just(arr[0]) : M.Maybe.Nothing();
 // Create a safe prop function using a Maybe (Just/Nothing)
-const safeProp = (x) => (obj) => obj[x] ? M.Maybe.Just(obj[x]) : M.Maybe.Nothing();
+const safePropA = (x) => (obj) => obj[x] ? M.Maybe.Just(obj[x]) : M.Maybe.Nothing();
 
-const getHeadPropToDecimal = (x) => M.Maybe.fromEmpty(x)
-  .chain(safeHead)
-  .chain(safeProp("value"))
-  .map(R.divide(100));
+const getHeadPropToDecimalA = (x) => M.Maybe.fromEmpty(x)
+  .chain(safeHeadA)
+  .chain(safePropA("value"))
+  .map(divide(100));
 
-// getHeadPropToDecimal(values.null).orJust(0);
-// getHeadPropToDecimal(values.string).orJust(0);
-// getHeadPropToDecimal(values.empty).orJust(0);
-// getHeadPropToDecimal(values.missing).orJust(0);
-// getHeadPropToDecimal(values.prices).orJust(0);
+// getHeadPropToDecimalA(valuesB.null).orJust(0);
+// getHeadPropToDecimalA(valuesB.string).orJust(0);
+// getHeadPropToDecimalA(valuesB.empty).orJust(0);
+// getHeadPropToDecimalA(valuesB.missing).orJust(0);
+// getHeadPropToDecimalA(valuesB.prices).orJust(0);
 
 // -----------------------------------------------------------------------------
 
 // Maybe utils
 const safe = pred => x => pred(x) ? M.Maybe.Just(x) : M.Maybe.Nothing();
-const safeAfter = (pred, fn) => R.pipe(fn, safe(pred));
+const safeAfter = (pred, fn) => pipe(fn, safe(pred));
 // Type checking
 const isObject = x => typeof x === 'object' && !Array.isArray(x);
 const isNumber = x => typeof x === 'number' && !isNaN(x);
+const head = (arr) => arr[0];
+const prop = (x) => (obj) => obj[x];
 // Logic
-const safeHead = safeAfter(isObject, R.head);
-const safeProp = x => safeAfter(isNumber, R.prop(x));
+const safeHeadB = safeAfter(isObject, head);
+const safePropB = x => safeAfter(isNumber, prop(x));
 
-const getHeadPropToDecimal = (x) => M.Maybe.fromEmpty(x)
+const getHeadPropToDecimalB = (x) => M.Maybe.fromEmpty(x)
   .chain(safe(Array.isArray))
-  .chain(safeHead)
-  .chain(safeProp('value'))
-  .map(R.divide(100));
+  .chain(safeHeadB)
+  .chain(safePropB('value'))
+  .map(divide(100));
 
-// getHeadPropToDecimal(values.null).orJust(0);
-// getHeadPropToDecimal(values.string).orJust(0);
-// getHeadPropToDecimal(values.empty).orJust(0);
-// getHeadPropToDecimal(values.missing).orJust(0);
-// getHeadPropToDecimal(values.prices).orJust(0);
+// getHeadPropToDecimalB(valuesB.null).orJust(0);
+// getHeadPropToDecimalB(valuesB.string).orJust(0);
+// getHeadPropToDecimalB(valuesB.empty).orJust(0);
+// getHeadPropToDecimalB(valuesB.missing).orJust(0);
+// getHeadPropToDecimalB(valuesB.prices).orJust(0);
 
 /*******************************************************************************
  * EXERCISE - THREE - TRAIN TRACKS (EITHER)
@@ -174,7 +177,7 @@ const getCustomerMeta = (id) => {
 
 // -----------------------------------------------------------------------------
 
-const values = {
+const valuesC = {
   id: 12345
 };
 
@@ -191,7 +194,7 @@ function getCustomer_(values) {
   }
 }
 
-// getCustomer_(values);
+// getCustomer_(valuesC);
 
 // Use an Either to replace the above implementation
 
@@ -212,7 +215,7 @@ const getCustomer = (x) => M.Either.of(x)
   .chain(getProp("id"))
   .chain(tryCatch(getCustomerMeta));
 
-// getCustomer(values).fold(
+// getCustomer(valuesC).fold(
 //   x => x,
 //   x => x
 // );
@@ -236,15 +239,17 @@ const responseThree = {
 //   baz: { beep: false, boop: false, fizz: true }
 // }
 
+// -----------------------------------------------------------------------------
+
 const request_ = (ms, data) =>
   new Promise((resolve) => {
     setTimeout(() => resolve(data), ms);
   });
 
-const requestFail_ = (ms, error) =>
-  new Promise((resolve, reject) => {
-    setTimeout(() => reject(error), ms);
-  });
+// const requestFail_ = (ms, error) =>
+//   new Promise((resolve, reject) => {
+//     setTimeout(() => reject(error), ms);
+//   });
 
   async function getData_() {
     try {
@@ -276,9 +281,8 @@ const requestFail_ = (ms, error) =>
     }
   }
 
-getData_();
+// getData_();
 
-// -----------------------------------------------------------------------------
 
 // https://folktale.origamitower.com/api/v2.3.0/en/folktale.concurrency.task.html
 // Use a Task to replace the above implementation
@@ -293,7 +297,7 @@ const request = (ms, data) => Task.task((resolver) => {
 });
 
 const requestFail = (ms) => Task.task((resolver) => {
-  const timerId = setTimeout(() => resolver.reject(ms), ms);
+  const timerId = setTimeout(() => resolver.reject({ message: 'gahhhhh!'}), ms);
 
   resolver.cleanup(() => {
       clearTimeout(timerId)
@@ -313,20 +317,27 @@ const requestC = request(500, responseThree)
   .map(x => x.data)
   .orElse(reason => Task.of({ baz: {} }));
 
-const fetchAll = Task.waitAll([requestA, requestB, requestC])
+const requestD = requestFail(500);
+
+const fetchAll = Task.waitAll([
+  requestA, 
+  requestB, 
+  requestC,
+  // requestD
+])
   .map(trace)
-  .map(mergeAll)
-  .map(trace);
+  .map(mergeAll);
 
 // -----------------------------------------------------------------------------
 
 // component
-async function getData() {
-  try {
-    await fetchAll.run().promise();
-  } catch (error) {
-    console.log(error);
-  }
+function getData() {
+  return fetchAll.run().listen({
+    onCancelled: () => console.log('task was cancelled'),
+    onRejected:  (reason) => console.log(`task was rejected: ${JSON.stringify(reason)}`),
+    onResolved:  console.log
+  });
 }
 
 // getData();
+// getData().cancel();

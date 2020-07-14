@@ -31,7 +31,7 @@ Identity.of = Identity;
  * EXERCISE - ONE - THE BASE (FUNCTOR)
  ******************************************************************************/
 
-const values = {
+const valuesA = {
   id: 12345,
   name: "  spongebob stnaperauqs  ",
 };
@@ -43,7 +43,7 @@ function trimReverseSurname_(str) {
   return `${words[0]} ${words[1].split("").reverse().join("")}`;
 }
 
-// trimReverseString_(values.name);
+// trimReverseString_(valuesA.name);
 
 
 // Use a Functor to replace the above implementation
@@ -61,13 +61,13 @@ const adjust = (index, fn) => (arr) => {
 // Your Functor function
 const trimReverseSurname = (x) => null;
 
-// trimReverseSurname(values.name);
+// trimReverseSurname(valuesA.name);
 
 /*******************************************************************************
  * EXERCISE - TWO - HANDLING NULL/UNDEFINED (MAYBE)
  ******************************************************************************/
 
-const values = {
+const valuesB = {
   null: null,
   string: "",
   empty: [],
@@ -103,13 +103,14 @@ function getHeadPropToDecimal_(arr) {
   return item && item.value ? centToDecimal(item.value) : 0;
 }
 
-// getHeadPropToDecimal_(values.null);
-// getHeadPropToDecimal_(values.string);
-// getHeadPropToDecimal_(values.empty);
-// getHeadPropToDecimal_(values.missing);
-// getHeadPropToDecimal_(values.prices);
+// getHeadPropToDecimal_(valuesB.null);
+// getHeadPropToDecimal_(valuesB.string);
+// getHeadPropToDecimal_(valuesB.empty);
+// getHeadPropToDecimal_(valuesB.missing);
+// getHeadPropToDecimal_(valuesB.prices);
 
 // Use a Maybe to replace the above implementation
+const divide = (x) => (y) => x / y;
 
 // Create a safe head function using a Maybe (Just/Nothing)
 const safeHead = (arr) => null;
@@ -118,11 +119,11 @@ const safeProp = (x) => (obj) => null;
 // Your Maybe function
 const getHeadPropToDecimal = (x) => null;
 
-// getHeadPropToDecimal(values.null).orJust(0);
-// getHeadPropToDecimal(values.string).orJust(0);
-// getHeadPropToDecimal(values.empty).orJust(0);
-// getHeadPropToDecimal(values.missing).orJust(0);
-// getHeadPropToDecimal(values.prices).orJust(0);
+// getHeadPropToDecimal(valuesB.null).orJust(0);
+// getHeadPropToDecimal(valuesB.string).orJust(0);
+// getHeadPropToDecimal(valuesB.empty).orJust(0);
+// getHeadPropToDecimal(valuesB.missing).orJust(0);
+// getHeadPropToDecimal(valuesB.prices).orJust(0);
 
 /*******************************************************************************
  * EXERCISE - THREE - TRAIN TRACKS (EITHER)
@@ -143,7 +144,7 @@ const getCustomerMeta = (id) => {
 
 // -----------------------------------------------------------------------------
 
-const values = {
+const valuesC = {
   id: 12345
 };
 
@@ -160,7 +161,7 @@ function getCustomer_(values) {
   }
 }
 
-// getCustomer_(values);
+// getCustomer_(valuesC);
 
 // Use an Either to replace the above implementation
 
@@ -171,7 +172,7 @@ const tryCatch = (fn) => (x) => null;
 // Your Either function
 const getCustomer = (x) => null;
 
-// getCustomer(values).fold(
+// getCustomer(valuesC).fold(
 //   x => x,
 //   x => x
 // );
@@ -201,10 +202,10 @@ const request_ = (ms, data) =>
     setTimeout(() => resolve(data), ms);
   });
 
-const requestFail_ = (ms, error) =>
-  new Promise((resolve, reject) => {
-    setTimeout(() => reject(error), ms);
-  });
+// const requestFail_ = (ms, error) =>
+//   new Promise((resolve, reject) => {
+//     setTimeout(() => reject(error), ms);
+//   });
 
 async function getData_() {
   try {
@@ -213,15 +214,11 @@ async function getData_() {
       request_(1500, responseTwo),
       request_(500, responseThree),
     ]);
-
-    console.log(responses);
     
     // Flatten result
     const result = responses.reduce((acc, next) => {
         return {...acc, ...next.data};
     }, {});
-    
-    console.log(result);
 
     return result;
   } catch (error) {
@@ -238,10 +235,10 @@ async function getData_() {
 
 getData_();
 
-// -----------------------------------------------------------------------------
 
 // https://folktale.origamitower.com/api/v2.3.0/en/folktale.concurrency.task.html
 // Use a Task to replace the above implementation
+// Your response data must work with the existing mergeAll utility
 const mergeAll = xs => xs.reduce((acc, next) => ({ ...acc, ...next }), {});
 
 const request = (ms, data) => Task.task((resolver) => {
@@ -252,13 +249,13 @@ const request = (ms, data) => Task.task((resolver) => {
   });
 });
 
-const requestFail = (ms, error) => Task.task((resolver) => {
-  const timerId = setTimeout(() => resolver.reject(error), ms);
+// const requestFail = (ms) => Task.task((resolver) => {
+//   const timerId = setTimeout(() => resolver.reject({ message: 'gahhhhh!'}), ms);
 
-  resolver.cleanup(() => {
-      clearTimeout(timerId)
-  });
-});
+//   resolver.cleanup(() => {
+//       clearTimeout(timerId)
+//   });
+// });
 
 // pure functions
 const requestA = request(100, responseOne);
@@ -271,13 +268,14 @@ const fetchAll = null;
 
 // -----------------------------------------------------------------------------
 
-// component
-async function getData() {
-  try {
-    return await fetchAll.run().promise();
-  } catch (error) {
-    console.log(error);
-  }
+// component (DO NOT TOUCH)
+function getData() {
+  return fetchAll.run().listen({
+    onCancelled: () => console.log('task was cancelled'),
+    onRejected:  (reason) => console.log(`task was rejected: ${JSON.stringify(reason)}`),
+    onResolved:  console.log
+  });
 }
 
 // getData();
+// getData().cancel();

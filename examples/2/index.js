@@ -357,22 +357,18 @@ const fetchBing = TaxiosGet("https://www.bing.com/").map((x) => x.data);
 // Callback style
 // waits 100ms
 // Returns cancel action
-// const unsubscribe = taskDelay(100).or(taskDelay(2000)).run().listen({
+// const exec = taskDelay(100).or(taskDelay(2000)).run().listen({
 //     onCancelled: () => console.log("task was cancelled"),
 //     onRejected: (reason) => console.log(`task was rejected because ${reason}`),
 //     onResolved: (x) => console.log(x),
 // });
 
-// unsubscribe();
+// exec.cancel();
 
 // async/await style
 async function getBing() {
-  const exec = fetchBing.run();
-  const response = await exec.promise();
-  
-  // this will halt mapping
-  exec.future().cancel();
-  exec.future().map(x => console.log(x));
+  const response = await fetchBing.run().promise();
+  console.log(response);
 }
 
 // getBing();
