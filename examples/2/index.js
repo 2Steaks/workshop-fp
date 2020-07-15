@@ -50,7 +50,7 @@ const isString = x => typeof x === 'string';
 // This might help: https://github.com/hemanth/functional-programming-jargon
 
 // There are more, but this was just to illustrate the meaning behind these basic interfaces.
-// Today however, will be focusing on a Functor and some Monads.
+// Today however, will be focusing on Functors and Monads.
 
 // You should know that the examples you're about to see arn't just pretty APIs,
 // they are founded in mathematics and won't change between implementations.
@@ -183,8 +183,8 @@ const couldReturnSomething = prop => Maybe.of(prop)
 
 /*******************************************************************************
  * MONADS - MAYBE
- * - Handle undefined/null values or value validation
- * - Short circuits
+ * - Handle input validation
+ * - Can short circuit the function chain
  * - Expects a Just (success) or a Nothing (failure)
  ******************************************************************************/
 
