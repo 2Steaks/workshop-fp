@@ -330,9 +330,13 @@ const flutureDelay = (ms) => {
   });
 };
 
-const FaxiosGet = Future.encaseP(axios.get);
-const fetchGoogle = FaxiosGet("https://www.google.co.uk/")
+const Faxios = {
+  get: Future.encaseP(axios.get),
+  post: Future.encaseP(axios.post)
+}
+const fetchGoogle = Faxios.get("https://www.google.co.uk/")
   .pipe(Future.map((x) => x.data));
+
 
 // -----------------------------------------------------------------------------
 
@@ -374,8 +378,12 @@ const taskDelay = (ms) => {
   });
 };
 
-const TaxiosGet = Task.fromPromised(axios.get);
-const fetchBing = TaxiosGet("https://www.bing.com/").map((x) => x.data);
+const Taxios = {
+  get: Task.fromPromised(axios.get),
+  post: Task.fromPromised(axios.post)
+}
+
+const fetchBing = Taxios.get("https://www.bing.com/").map((x) => x.data);
 
 // -----------------------------------------------------------------------------
 
