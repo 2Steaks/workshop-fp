@@ -17,10 +17,19 @@ const pipe = (...fns) => (arg) =>
 /*******************************************************************************
  * EXERCISES
  * - Remember that monads expect another monad to change application flow
+ * - Remember to use trace
+ * - Fire questions my way
  ******************************************************************************/
 
 /*******************************************************************************
  * EXERCISE - ONE - THE BASE (FUNCTOR)
+ * 
+ * Use a Functor to replace the below implementation
+ * 
+ * - Trim any whitespace
+ * - Seperate the words into an Array
+ * - Reverse the surname
+ * - Return the corrected name
  ******************************************************************************/
 
 const valuesA = {
@@ -38,8 +47,6 @@ function trimReverseSurname_(str) {
 // trimReverseString_(valuesA.name);
 
 // -----------------------------------------------------------------------------
-
-// Use a Functor to replace the above implementation
 
 const trim = (x) => x.trim();
 const split = (match) => (x) => x.split(match);
@@ -69,6 +76,15 @@ const trimReverseSurname = (x) => null;
 
 /*******************************************************************************
  * EXERCISE - TWO - HANDLING NULL/UNDEFINED (MAYBE)
+ * 
+ * Use a Maybe to replace the below implementation
+ * Ref: https://github.com/monet/monet.js/blob/master/docs/MAYBE.md
+ * 
+ * - Check value is defined and an Array
+ * - Check head of Array is not undefined
+ * - Check value property exists
+ * - Convert cent to decimal
+ * - Default value to zero
  ******************************************************************************/
 
 const valuesB = {
@@ -93,7 +109,7 @@ const valuesB = {
   ],
 };
 
-function centToDecimal(value) {
+function centToDecimal_(value) {
   return value / 100;
 }
 
@@ -104,7 +120,7 @@ function getHeadPropToDecimal_(arr) {
 
   const item = arr[0];
 
-  return item && item.value ? centToDecimal(item.value) : 0;
+  return item && item.value ? centToDecimal_(item.value) : 0;
 }
 
 // getHeadPropToDecimal_(valuesB.null);
@@ -115,8 +131,7 @@ function getHeadPropToDecimal_(arr) {
 
 // -----------------------------------------------------------------------------
 
-// Use a Maybe to replace the above implementation
-const divide = (x) => (y) => x / y;
+const divide = (x) => (y) => y / x;
 
 // Create a safe head function using a Maybe (Just/Nothing)
 const safeHead = (arr) => null;
@@ -133,6 +148,13 @@ const getHeadPropToDecimal = (x) => null;
 
 /*******************************************************************************
  * EXERCISE - THREE - TRAIN TRACKS (EITHER)
+ * 
+ * Use an Either to replace the below implementation
+ * Ref: https://github.com/monet/monet.js/blob/master/docs/EITHER.md
+ *  
+ * - Check values is defined
+ * - Handle possibly undefined property
+ * - Handle runtime error with a try/catch helper
  ******************************************************************************/
 
 const getCustomerMeta = (id) => {
@@ -152,6 +174,7 @@ const valuesC = {
   id: 12345
 };
 
+
 function getCustomer_(values) {
   if (!values) {
     console.log('No data');
@@ -169,8 +192,6 @@ function getCustomer_(values) {
 
 // -----------------------------------------------------------------------------
 
-// Use an Either to replace the above implementation
-
 // Create a safe prop function using an Either
 const getProp = (x) => (obj) => null;
 // Create a try/catch function using an Either
@@ -185,7 +206,21 @@ const getCustomer = (x) => null;
 
 /*******************************************************************************
  * EXERCISE - FOUR - BRIGHT FUTURES (ASYNC)
+ * 
+ * Use a Task to replace the below implementation
+ * Ref: https://folktale.origamitower.com/api/v2.3.0/en/folktale.concurrency.task.html
+ * 
+ * - Map potential responses to acquire result (axios response { data: GOLD })
+ * - Supply default values for each task i.e { foo: {} }
+ * - Run tasks in parallel
+ * - Use the mergeAll function to achieve the below format
+ * {
+ *   foo: { zip: true, pop: false, bang: true },
+ *   bar: { wiz: true, pow: true, zop: true },
+ *   baz: { beep: false, boop: false, fizz: true }
+ * }
  ******************************************************************************/
+
 const responseFail = { message: 'something went wrong' };
 const responseOne = { 
   data: { foo: { zip: true, pop: false, bang: true } }
@@ -196,12 +231,6 @@ const responseTwo = {
 const responseThree = {
   data: { baz: { beep: false, boop: false, fizz: true } },
 };
-
-// {
-//   foo: { zip: true, pop: false, bang: true },
-//   bar: { wiz: true, pow: true, zop: true },
-//   baz: { beep: false, boop: false, fizz: true }
-// }
 
 const request_ = (ms, data) =>
   new Promise((resolve) => {
@@ -242,10 +271,7 @@ async function getData_() {
 getData_();
 
 // -----------------------------------------------------------------------------
-
-// https://folktale.origamitower.com/api/v2.3.0/en/folktale.concurrency.task.html
-// Use a Task to replace the above implementation
-// Your response data must work with the existing mergeAll utility
+ 
 const mergeAll = xs => xs.reduce((acc, next) => ({ ...acc, ...next }), {});
 
 const request = (ms, data) => Task.task((resolver) => {
@@ -255,14 +281,6 @@ const request = (ms, data) => Task.task((resolver) => {
       clearTimeout(timerId)
   });
 });
-
-// const requestFail = (ms) => Task.task((resolver) => {
-//   const timerId = setTimeout(() => resolver.reject({ message: 'gahhhhh!'}), ms);
-
-//   resolver.cleanup(() => {
-//       clearTimeout(timerId)
-//   });
-// });
 
 // pure functions
 const requestA = request(100, responseOne);

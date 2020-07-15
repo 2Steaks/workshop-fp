@@ -25,10 +25,19 @@ Identity.of = Identity;
 /*******************************************************************************
  * EXERCISES
  * - Remember that monads expect another monad to change application flow
+ * - Remember to use trace
+ * - Fire questions my way
  ******************************************************************************/
 
 /*******************************************************************************
  * EXERCISE - ONE - THE BASE (FUNCTOR)
+ * 
+ * Use a Functor to replace the below implementation
+ * 
+ * - Trim any whitespace
+ * - Seperate the words into an Array
+ * - Reverse the surname
+ * - Return the corrected name
  ******************************************************************************/
 
 const valuesA = {
@@ -47,7 +56,6 @@ function trimReverseSurname_(str) {
 
 // -----------------------------------------------------------------------------
 
-// Use a Functor to replace the above implementation
 const trim = (x) => x.trim();
 const split = (match) => (x) => x.split(match);
 const reverse = (x) => x.reverse();
@@ -70,6 +78,15 @@ const trimReverseSurname = (x) => Identity.of(x)
 
 /*******************************************************************************
  * EXERCISE - TWO - HANDLING NULL/UNDEFINED (MAYBE)
+ * 
+ * Use a Maybe to replace the below implementation
+ * Ref: https://github.com/monet/monet.js/blob/master/docs/MAYBE.md
+ * 
+ * - Check value is defined and an Array
+ * - Check head of Array is not undefined
+ * - Check value property exists
+ * - Convert cent to decimal
+ * - Default value to zero
  ******************************************************************************/
 
 const valuesB = {
@@ -94,7 +111,7 @@ const valuesB = {
   ],
 };
 
-function centToDecimal(value) {
+function centToDecimal_(value) {
   return value / 100;
 }
 
@@ -105,7 +122,7 @@ function getHeadPropToDecimal_(arr) {
 
   const item = arr[0];
 
-  return item && item.value ? centToDecimal(item.value) : 0;
+  return item && item.value ? centToDecimal_(item.value) : 0;
 }
 
 // getHeadPropToDecimal_(valuesB.null);
@@ -116,8 +133,10 @@ function getHeadPropToDecimal_(arr) {
 
 // -----------------------------------------------------------------------------
 
-// Use a Maybe to replace the above implementation
-const divide = (x) => (y) => x / y;
+const divide = (x) => (y) => y / x;
+// You could even type lift functions so that the inputs are validated with a Maybe
+// See: https://crocks.dev/docs/getting-started.html and search safeDivide
+const centToDecimal = divide(100);
 
 // Create a safe head function using a Maybe (Just/Nothing)
 const safeHeadA = (arr) => Array.isArray(arr) && arr[0] ? M.Maybe.Just(arr[0]) : M.Maybe.Nothing();
@@ -127,7 +146,7 @@ const safePropA = (x) => (obj) => obj[x] ? M.Maybe.Just(obj[x]) : M.Maybe.Nothin
 const getHeadPropToDecimalA = (x) => M.Maybe.fromEmpty(x)
   .chain(safeHeadA)
   .chain(safePropA("value"))
-  .map(divide(100));
+  .map(centToDecimal);
 
 // getHeadPropToDecimalA(valuesB.null).orJust(0);
 // getHeadPropToDecimalA(valuesB.string).orJust(0);
@@ -153,7 +172,7 @@ const getHeadPropToDecimalB = (x) => M.Maybe.fromEmpty(x)
   .chain(safe(Array.isArray))
   .chain(safeHeadB)
   .chain(safePropB('value'))
-  .map(divide(100));
+  .map(centToDecimal);
 
 // getHeadPropToDecimalB(valuesB.null).orJust(0);
 // getHeadPropToDecimalB(valuesB.string).orJust(0);
@@ -163,6 +182,13 @@ const getHeadPropToDecimalB = (x) => M.Maybe.fromEmpty(x)
 
 /*******************************************************************************
  * EXERCISE - THREE - TRAIN TRACKS (EITHER)
+ * 
+ * Use an Either to replace the below implementation
+ * Ref: https://github.com/monet/monet.js/blob/master/docs/EITHER.md
+ *  
+ * - Check values is defined
+ * - Handle possibly undefined property
+ * - Handle runtime error with a try/catch helper
  ******************************************************************************/
 
 const getCustomerMeta = (id) => {
@@ -199,8 +225,6 @@ function getCustomer_(values) {
 
 // -----------------------------------------------------------------------------
 
-// Use an Either to replace the above implementation
-
 // Create a safe prop function using an Either
 const getProp = (x) => (obj) => !obj[x] 
   ? M.Either.Left(`${x} is required`) 
@@ -225,7 +249,21 @@ const getCustomer = (x) => M.Either.of(x)
 
 /*******************************************************************************
  * EXERCISE - FOUR - BRIGHT FUTURES (ASYNC)
+ * 
+ * Use a Task to replace the below implementation
+ * Ref: https://folktale.origamitower.com/api/v2.3.0/en/folktale.concurrency.task.html
+ * 
+ * - Map potential responses to acquire result (axios response { data: GOLD })
+ * - Supply default values for each task i.e { foo: {} }
+ * - Run tasks in parallel
+ * - Use the mergeAll function to achieve the below format
+ * {
+ *   foo: { zip: true, pop: false, bang: true },
+ *   bar: { wiz: true, pow: true, zop: true },
+ *   baz: { beep: false, boop: false, fizz: true }
+ * }
  ******************************************************************************/
+
 const responseFail = { message: 'something went wrong' };
 const responseOne = { 
   data: { foo: { zip: true, pop: false, bang: true } }
@@ -236,11 +274,6 @@ const responseTwo = {
 const responseThree = {
   data: { baz: { beep: false, boop: false, fizz: true } },
 };
-// {
-//   foo: { zip: true, pop: false, bang: true },
-//   bar: { wiz: true, pow: true, zop: true },
-//   baz: { beep: false, boop: false, fizz: true }
-// }
 
 const request_ = (ms, data) =>
   new Promise((resolve) => {
@@ -286,8 +319,6 @@ const request_ = (ms, data) =>
 
 // -----------------------------------------------------------------------------
 
-// https://folktale.origamitower.com/api/v2.3.0/en/folktale.concurrency.task.html
-// Use a Task to replace the above implementation
 const mergeAll = xs => xs.reduce((acc, next) => ({ ...acc, ...next }), {});
 
 const request = (ms, data) => Task.task((resolver) => {
