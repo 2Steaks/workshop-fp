@@ -251,11 +251,15 @@ async function getData_() {
       request_(1500, responseTwo),
       request_(500, responseThree),
     ]);
+
+    console.log(responses);
     
     // Flatten result
     const result = responses.reduce((acc, next) => {
         return {...acc, ...next.data};
     }, {});
+
+    console.log(result);
 
     return result;
   } catch (error) {

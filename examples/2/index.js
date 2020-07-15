@@ -35,6 +35,18 @@ const isString = x => typeof x === 'string';
 // - Containing side-effects 📦
 // - Running through some exerices 🏋️‍
 
+
+// Question: What are the 3 biggest contributors to application complexity?
+
+// Answer:
+// 1. State
+// 2. Control flow
+// 3. Code volume
+
+// What's great at handling these 3 issues? dot chaining/compositon.
+// We are going to be tackling the 1 & 2 today
+
+
 /*******************************************************************************
  * SOME FP LINGO
  ******************************************************************************/
@@ -97,11 +109,6 @@ const Box = (x) => ({
 
 Box.of = Box;
 
-// We get composition
-// Easier debugging (see trace)
-// Cleaner and easier to understand
-// The context only takes 1 value so we can't introduce others and pollute the environment
-
 // const uppercaseReverse = (text) =>
 //   Box.of(text)
 //     .map((x) => x.toUpperCase())
@@ -109,6 +116,14 @@ Box.of = Box;
 //     .map((x) => x.reverse());
 
 // uppercaseReverse("hello world");
+
+// So what do we get?
+// - Unified call syntax
+// - Minimised state
+// - Captured assignment
+// - Forced control flow
+// - Composition
+// - Easier debugging experience (see trace)
 
 // Abstraction of function application?
 // We are starting to see why this is powerful
@@ -124,9 +139,9 @@ const Nullable = (x) => ({
 Nullable.of = Nullable;
 
 // Nullable.of(null)
-//     .map((x) => x.toUpperCase())
-//     .map((x) => x.split(""))
-//     .map((x) => x.reverse());
+//   .map((x) => x.toUpperCase())
+//   .map((x) => x.split(""))
+//   .map((x) => x.reverse());
 
 /*******************************************************************************
  * MONADS
