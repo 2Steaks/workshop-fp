@@ -28,11 +28,12 @@ const isString = x => typeof x === 'string';
  * TODAY
  ******************************************************************************/
 // - Diving deeper into FP 🏊‍
+// - Use Functors 🕺
 // - Use Monads 🧙‍
-  // - Control application flow 🛤
-  // - Error handling 💣
-  // - Containing side-effects 📦
-  // - Running through some exerices 🏋️‍
+// - Control application flow 🛤
+// - Error handling 💣
+// - Containing side-effects 📦
+// - Running through some exerices 🏋️‍
 
 /*******************************************************************************
  * SOME FP LINGO
