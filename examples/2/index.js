@@ -41,16 +41,16 @@ const isString = x => typeof x === 'string';
 
 // This is my attempt at explaining some functional programming concepts.
 
-// - A SemiGroup concats 
-// - A Monoid is a SemiGroup that also has an assigned empty value (identity)
-// - A Functor maps
+// - A SemiGroup has a concat method
+// - A Monoid is a SemiGroup that also has an assigned empty value (identity) i.e an empty Sum=0
+// - A Functor can map any data type
 // - A Monad is "a monoid in the category of endofunctors" (this has become a running joke in the FP world)
-//   - is a Functor that can also chain (unwrap nested context)
+//   - it's a Functor that can also chain (unwrap context from another incoming Monad)
 
 // This might help: https://github.com/hemanth/functional-programming-jargon
 
-// There are more, but this was to illustrate the meaning behind the obscure
-// names. Today however, will be focusing on a Functor and some Monads.
+// There are more, but this was just to illustrate the meaning behind these basic interfaces.
+// Today however, will be focusing on a Functor and some Monads.
 
 // You should know that the examples you're about to see arn't just pretty APIs,
 // they are founded in mathematics and won't change between implementations.
