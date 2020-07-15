@@ -152,7 +152,6 @@ const getHeadPropToDecimal = (x) => null;
  * Use an Either to replace the below implementation
  * Ref: https://github.com/monet/monet.js/blob/master/docs/EITHER.md
  *  
- * - Check values is defined
  * - Handle possibly undefined property
  * - Handle runtime error with a try/catch helper
  ******************************************************************************/
@@ -173,14 +172,12 @@ const getCustomerMeta = (id) => {
 const valuesC = {
   id: 12345
 };
+const valuesC2 = {
+  id: undefined
+};
 
 
 function getCustomer_(values) {
-  if (!values) {
-    console.log('No data');
-    return;
-  }
-
   try {
     return getCustomerMeta(values.id);
   } catch (error) {
@@ -189,6 +186,7 @@ function getCustomer_(values) {
 }
 
 // getCustomer_(valuesC);
+// getCustomer_(valuesC2);
 
 // -----------------------------------------------------------------------------
 
@@ -200,6 +198,10 @@ const tryCatch = (fn) => (x) => null;
 const getCustomer = (x) => null;
 
 // getCustomer(valuesC).fold(
+//   x => x,
+//   x => x
+// );
+// getCustomer(valuesC2).fold(
 //   x => x,
 //   x => x
 // );
