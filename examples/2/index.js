@@ -28,10 +28,10 @@ const isString = x => typeof x === 'string';
  * TODAY
  ******************************************************************************/
 // - Diving deeper into FP 🏊‍
-// - Use Functors 🕺
-// - Use Monads 🧙‍
-// - Control application flow 🛤
-// - Error handling 💣
+// - We're going to be using Functors 🕺
+// - We're going to be using Monads 🧙‍
+// - Controlling application flow 🛤
+// - Handling errors 💣
 // - Containing side-effects 📦
 // - Running through some exerices 🏋️‍
 
@@ -43,39 +43,41 @@ const isString = x => typeof x === 'string';
 // 2. Control flow
 // 3. Code volume
 
-// What's great at handling these 3 issues? dot chaining/compositon.
-// We are going to be tackling the 1 & 2 today
+// What's great at handling these issues? dot chaining/compositon.
+// Today we are going to be tackling 1 & 2 (at least)
 
 
 /*******************************************************************************
  * SOME FP LINGO
  ******************************************************************************/
 
-// This is my attempt at explaining some functional programming concepts.
+// Some basic translations for some common FP terms
 
-// - A SemiGroup has a concat method
-// - A Monoid is a SemiGroup that also has an assigned empty value (identity) i.e an empty Sum=0
-// - A Functor can map any data type
-// - A Monad is "a monoid in the category of endofunctors" (this has become a running joke in the FP world)
-//   - it's a Functor that can also chain (unwrap context from another incoming Monad)
+// - A SemiGroup has a concat method :: Sum(3).concat(Sum(3)) = Sum(6)
+// - A Monoid is a SemiGroup that also has an assigned empty value (which is called it's identity) :: Sum.empty() === 0
+// - A Functor can map any data type :: Functor(x).map(fn)
+// - A Monad is "a monoid in the category of endofunctors" (this has become a running joke in the FP world because to everyone else it doesn't make any sense)
+//   - it's a Functor that can also chain (unwrap context from another incoming Monad) :: Monad(x).chain(Monad) === behaviour
 
 // This might help: https://github.com/hemanth/functional-programming-jargon
 
-// There are more, but this was just to illustrate the meaning behind these basic interfaces.
-// Today however, will be focusing on Functors and Monads.
+// There's more, but this was just to illustrate the meaning behind these interfaces.
+// Today however, will be focusing only on Functors and Monads.
 
 // You should know that the examples you're about to see arn't just pretty APIs,
-// they are founded in mathematics and won't change between implementations.
-// The FP spec for JS can be found here: https://github.com/fantasyland/fantasy-land
+// they are founded in mathematics and won't change between implementations, 
+// a Functor will always .map and a Monad will always .chain
+
+// The FP spec for JS can be found here: https://github.com/fantasyland/fantasy-land 🚨 DRY READ ALERT 🚨
 // All libraries based on FP will attempt to abide (some may deviate slightly) by the rules in this repo.
 // See https://github.com/ramda/ramda/blob/v0.27.0/source/map.js line: 12
 
 /*******************************************************************************
  * FUNCTORS
  * - They have laws
- *  - Functors must preserve identity morphisms (returns a context of the same type)
- *  - Functors preserve composition of morphisms (have a map function)
- * - Provides a level of inversion
+ *  - Functors must preserve identity morphisms (return a context of the same type)
+ *  - Functors preserve composition of morphisms (they can map)
+ * - They provide a level of inversion
  * - They are dot chainable
  * - They give you abstraction of function application (we dont call the funtions we're getting BOX to call it for us) this becomes more important later
  * - Building block to other implementations
@@ -138,16 +140,16 @@ const Nullable = (x) => ({
 
 Nullable.of = Nullable;
 
-// Nullable.of(null)
+// Nullable.of('hello')
 //   .map((x) => x.toUpperCase())
-//   .map((x) => x.split(""))
+//   .map((x) => null)
 //   .map((x) => x.reverse());
 
 /*******************************************************************************
  * MONADS
- * - Data structure to handle application flow
- * - Protect against runtime errors.
- * - Can be used to handle side effects
+ * - They are data structures to handle application flow
+ * - They protect against runtime errors.
+ * - They can be used to handle side effects
  ******************************************************************************/
 
 // A monad is a way of composing functions that require context in addition to 
@@ -157,26 +159,27 @@ Nullable.of = Nullable;
 // have to worry about it while we’re composing things.
 
 
-// The closest thing we have to a Monad is the Promise
+// The closest thing we have to a Monad is a Promise but due to not following 
+// some specific rules cannot be considered a Monad
 const whereMyData = x => Promise.resolve(x);
-// Notice our value is still stuck inside the context of a Promise
+// Notice our value is still stuck inside the context of the Promise
 // whereMyData(20) // Promise(20)
 
-// To get at the data/error we need to add our then/catch
+// To get at the data/error we need to add then/catch
 const promiseMe = x => new Promise((res, rej) => res(x))
-  // Maps the value
+  // It can map
   .then((x) => x + 1)
-  // Automatically knows how to handle another Promise and flattens to 4
-  .then((y) => new Promise((res, rej) => res(y * 2)))
-  // Automatically flattens the promise to 8
-  .then((z) => new Promise((res, rej) => res(z * 2)))
+  // It automatically knows how to handle another Promise and 
+  .then((y) => new Promise((res, rej) => res(y * 2))) // flattens the promise to 4
+  .then((z) => new Promise((res, rej) => res(z * 2))) // flattens the promise to 8
   .then(console.log) 
   .catch((error) => error);
 
 // promiseMe(1); // 8
 
 
-// A basic example
+// Here is a basic example of how we might handle application flow
+// Variables and conditions thrown loosely around like a teenagers bedroom.
 function couldReturnSomething_(prop) {
   if (!prop) {
     return;
@@ -188,19 +191,20 @@ function couldReturnSomething_(prop) {
   return bar && toBuzz(bar);
 }
 
-// Composition can continue or we can fold out to the raw value
+// Here is how a Maybe might handle the same situation.
+// Composition with minimal state
 const couldReturnSomething = prop => Maybe.of(prop)
   .chain(toFoo) // returns a Maybe (Just/Nothing)
   .chain(toBar) // returns a Maybe (Just/Nothing)
   .chain(toBuzz) // returns a Maybe (Just/Nothing)
-  .fold();
+  .fold(); // The composition can continue or we can fold out to the raw value
 
 
 /*******************************************************************************
  * MONADS - MAYBE
- * - Handle input validation
+ * - Handles input validation
  * - Can short circuit the function chain
- * - Expects a Just (success) or a Nothing (failure)
+ * - It expects a Just (success) or a Nothing (failure)
  ******************************************************************************/
 
 // A Maybe represents disjunction by using two constructors, Nothing or Just. 
