@@ -29,15 +29,16 @@ const isString = x => typeof x === 'string';
  ******************************************************************************/
 // - Diving deeper into FP 🏊‍
 // - Use Monads 🧙‍
-// - Control application flow 🛤
-// - Error handling 💣
-// - Containing side-effects 📦
-// - Running through some exerices 🏋️‍
-
+  // - Control application flow 🛤
+  // - Error handling 💣
+  // - Containing side-effects 📦
+  // - Running through some exerices 🏋️‍
 
 /*******************************************************************************
  * SOME FP LINGO
  ******************************************************************************/
+
+// This is my attempt at explaining some functional programming concepts.
 
 // - A SemiGroup concats 
 // - A Monoid is a SemiGroup that also has an assigned empty value (identity)
@@ -45,15 +46,15 @@ const isString = x => typeof x === 'string';
 // - A Monad is "a monoid in the category of endofunctors" (this has become a running joke in the FP world)
 //   - is a Functor that can also chain (unwrap nested context)
 
-// There are more, but this was to illustrate the meaning behind the ridiculous
-// names. We however, will be focusing on only Functors and Monads.
-
 // This might help: https://github.com/hemanth/functional-programming-jargon
+
+// There are more, but this was to illustrate the meaning behind the obscure
+// names. Today however, will be focusing on a Functor and some Monads.
 
 // You should know that the examples you're about to see arn't just pretty APIs,
 // they are founded in mathematics and won't change between implementations.
-// The JS FP spec can be found here: https://github.com/fantasyland/fantasy-land
-// All libraries based on FP will attempt to abide (some may deviate) by the rules in this repo.
+// The FP spec for JS can be found here: https://github.com/fantasyland/fantasy-land
+// All libraries based on FP will attempt to abide (some may deviate slightly) by the rules in this repo.
 // See https://github.com/ramda/ramda/blob/v0.27.0/source/map.js line: 12
 
 /*******************************************************************************
@@ -63,7 +64,7 @@ const isString = x => typeof x === 'string';
  *  - Functors preserve composition of morphisms (have a map function)
  * - Provides a level of inversion
  * - They are dot chainable
- * - Abstraction of function application (we dont call the funtions we're getting BOX to call it for us) this becomes more important later
+ * - They give you abstraction of function application (we dont call the funtions we're getting BOX to call it for us) this becomes more important later
  * - Building block to other implementations
  ******************************************************************************/
 
@@ -83,10 +84,10 @@ const arr = Array.of(x);  // The type lift.
 const result = arr.map(f); // [40]
 
 
-// Otherwise known as Identity
+// A box otherwise known as Identity
 const Box = (x) => ({
-  // Executes function with inner value then returns the result inside another 
-  // context ready for the next action
+  // Executes function with inner value then returns the result inside the same 
+  // type of context ready for the next action
   map: (f) => Box.of(f(x)),
   // Unwrap context to raw value
   fold: (f) => f(x),
@@ -94,6 +95,11 @@ const Box = (x) => ({
 });
 
 Box.of = Box;
+
+// We get composition
+// Easier debugging (see trace)
+// Cleaner and easier to understand
+// The context only takes 1 value so we can't introduce others and pollute the environment
 
 // const uppercaseReverse = (text) =>
 //   Box.of(text)
@@ -103,6 +109,23 @@ Box.of = Box;
 
 // uppercaseReverse("hello world");
 
+// Abstraction of function application?
+// We are starting to see why this is powerful
+const Nullable = (x) => ({
+  // now we can easily handle null/undefined values and stop executing functions
+  map: (f) => typeof x === 'undefined' || x === null
+    ? Nullable.of(null)
+    : Nullable.of(f(x)),
+  fold: (f) => f(x),
+  inspect: `Nullable(${JSON.stringify(x)})`,
+});
+
+Nullable.of = Nullable;
+
+// Nullable.of(null)
+//     .map((x) => x.toUpperCase())
+//     .map((x) => x.split(""))
+//     .map((x) => x.reverse());
 
 /*******************************************************************************
  * MONADS
@@ -159,7 +182,7 @@ const couldReturnSomething = prop => Maybe.of(prop)
 
 /*******************************************************************************
  * MONADS - MAYBE
- * - Handle undefined/null values
+ * - Handle undefined/null values or value validation
  * - Short circuits
  * - Expects a Just (success) or a Nothing (failure)
  ******************************************************************************/
@@ -186,20 +209,23 @@ const Nothing = (x) => ({
   inspect: `Nothing(${x})`,
 });
 
+// You could have a null check like we did before with the Nullable functor
+const hasValue = fn => x => typeof fn(x) !== 'undefined' && fn(x) !== null
+  ? M.Maybe.Just(x) 
+  : M.Maybe.Nothing();
+
+// Or better yet, you could be more explicit with custom validations
 const safe = pred => x => pred(x) 
   ? M.Maybe.Just(x) 
   : M.Maybe.Nothing();
 
+// You could even validate a function return value
 const safeAfter = (pred, fn) => pipe(fn, safe(pred));
 
 // M.Maybe.of("hello")
 //   .chain(safe(isString))
 //   .chain(safeAfter(isString, x => x + ' world'))
 //   .orSome('default value');
-
-// I would recommend the crocks library documentation to see Monads in action with 
-// Ramda-like composition: https://crocks.dev/docs/getting-started.html
-
 
 /*******************************************************************************
  * MONADS - EITHER
@@ -400,3 +426,15 @@ async function funTaskToPromise() {
 }
 
 // funTaskToPromise();
+
+
+/*******************************************************************************
+ * FINAL NOTES
+ ******************************************************************************/
+
+// This was all just to see how Functors and Monads work, but you can also use 
+// them inline with libraries like Ramda, to see this in action I would recommend
+// taking a look at the crocks library documentation: https://crocks.dev/docs/getting-started.html
+
+// See: https://crocks.dev/docs/crocks/Arrow.html and search for option to see 
+// how a Maybe is being used with the option helper.
