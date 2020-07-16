@@ -36,17 +36,6 @@ const isString = x => typeof x === 'string';
 // - Running through some exerices 🏋️‍
 
 
-// Question: What are the 3 biggest contributors to application complexity?
-
-// Answer:
-// 1. State
-// 2. Control flow
-// 3. Code volume
-
-// What's great at handling these issues? dot chaining/compositon.
-// Today we are going to be tackling 1 & 2 (at least)
-
-
 /*******************************************************************************
  * SOME FP LINGO
  ******************************************************************************/
