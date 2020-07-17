@@ -46,7 +46,7 @@ const isString = x => typeof x === 'string';
 // - A Monoid is a SemiGroup that also has an assigned empty value (which is called it's identity) :: Sum.empty() === 0
 // - A Functor can map any data type :: Functor(x).map(fn)
 // - A Monad is "a monoid in the category of endofunctors" (this has become a running joke in the FP world because to everyone else it doesn't make any sense)
-//   - it's a Functor that can also chain (unwrap context from another incoming Monad) :: Monad(x).chain(Monad) === behaviour
+//   - it's a Functor that can also chain (unwrap outer context for another incoming Monad) :: Monad(x).chain(Monad) === behaviour
 
 // This might help: https://github.com/hemanth/functional-programming-jargon
 
@@ -56,10 +56,6 @@ const isString = x => typeof x === 'string';
 // You should know that the examples you're about to see arn't just pretty APIs,
 // they are founded in mathematics and won't change between implementations, 
 // a Functor will always .map and a Monad will always .chain
-
-// The FP spec for JS can be found here: https://github.com/fantasyland/fantasy-land 🚨 DRY READ ALERT 🚨
-// All libraries based on FP will attempt to abide (some may deviate slightly) by the rules in this repo.
-// See https://github.com/ramda/ramda/blob/v0.27.0/source/map.js line: 12
 
 /*******************************************************************************
  * FUNCTORS
@@ -147,7 +143,6 @@ Nullable.of = Nullable;
 // The point of functors and monads is to abstract that context away so we don’t 
 // have to worry about it while we’re composing things.
 
-
 // The closest thing we have to a Monad is a Promise but due to not following 
 // some specific rules cannot be considered a Monad
 const whereMyData = x => Promise.resolve(x);
@@ -165,6 +160,15 @@ const promiseMe = x => new Promise((res, rej) => res(x))
   .catch((error) => error);
 
 // promiseMe(1); // 8
+
+
+// Fun fact: When the promise specification was worked out, some people argued that 
+// promises should be proper monads (https://github.com/promises-aplus/promises-spec/issues/94),
+// but they were shut down and told they were living in a fantasy land.
+
+// The FP spec for JS can be found here: https://github.com/fantasyland/fantasy-land 🚨 DRY READ ALERT 🚨
+// All libraries based on FP will attempt to abide (some may deviate slightly) by the rules in this repo.
+// See https://github.com/ramda/ramda/blob/v0.27.0/source/map.js line: 12
 
 
 // Here is a basic example of how we might handle application flow
@@ -455,3 +459,6 @@ async function funTaskToPromise() {
 
 // See: https://crocks.dev/docs/crocks/Arrow.html and search for option to see 
 // how a Maybe is being used with the option helper.
+
+// If you feel like you're still a little hazy about Monads I would suggest finding
+// learning material by Kyle Simpson: https://github.com/getify/Functional-Light-JS/blob/master/manuscript/apB.md/#appendix-b-the-humble-monad
