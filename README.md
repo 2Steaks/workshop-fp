@@ -30,7 +30,6 @@ We are going to be taking a look at these principles and seeing how we can fit i
     * monet
     * fluture
     * folktale
-    * fun-task
 
 ## Suggested Learning
 * https://frontendmasters.com/courses/functional-javascript-v3/why-functional-programming/

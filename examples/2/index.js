@@ -8,8 +8,6 @@ import Future from "fluture";
 // https://folktale.origamitower.com/
 // https://folktale.origamitower.com/api/v2.0.0/en/folktale.concurrency.task.html
 import Task from "folktale/concurrency/task";
-// https://github.com/rpominov/fun-task
-import FunTask from 'fun-task';
 
 const trace = (x) => {
   console.log(JSON.stringify(x));
@@ -42,8 +40,8 @@ const isString = x => typeof x === 'string';
 
 // Some basic translations for some common FP terms
 
-// - A SemiGroup has a concat method :: Sum(3).concat(Sum(3)) = Sum(6)
-// - A Monoid is a SemiGroup that also has an assigned empty value (which is called it's identity) :: Sum.empty() === 0
+// - A SemiGroup is an object that has a concat function that combines it with another object of the same type. :: Sum(3).concat(Sum(3)) = Sum(6)
+// - A Monoid is a SemiGroup that also has an assigned empty value (which is called it's identity) :: Sum.empty() === Sum(0)
 // - A Functor can map any data type :: Functor(x).map(fn)
 // - A Monad is "a monoid in the category of endofunctors" (this has become a running joke in the FP world because to everyone else it doesn't make any sense)
 //   - it's a Functor that can also chain (unwrap outer context for another incoming Monad) :: Monad(x).chain(Monad) === behaviour
@@ -253,8 +251,8 @@ const safeAfter = (pred, fn) => pipe(fn, safe(pred));
 
 const Left = (x) => ({
   // Notice the function is no longer executed
-  map: (f) => Left(),
-  chain: (f) => Left(),
+  map: (f) => Left(x),
+  chain: (f) => Left(x),
   // When we fold out the left side will be executed
   fold: (f, g) => f(x),
   inspect: `Left(${x})`,
@@ -419,35 +417,6 @@ async function getBing() {
 }
 
 // getBing();
-
-/*******************************************************************************
- * MONADS - TASK - FUNTASK
- ******************************************************************************/
-
-const funTaskDelay = (ms) => FunTask.create((res) => {
-  const id = setTimeout(() => res(ms), ms);
-
-  return () => clearTimeout(id);
-})
-
-// const unsubscribeFT = funTaskDelay(500).run({
-//   success(x) {
-//     console.log(x)
-//   }, 
-//   failure(error) {
-//     console.log(`task was rejected because ${error}`)
-//   }
-// })
-
-// unsubscribeFT();
-
-async function funTaskToPromise() {
-  const response = await funTaskDelay(1000).toPromise();
-  console.log(response);
-}
-
-// funTaskToPromise();
-
 
 /*******************************************************************************
  * FINAL NOTES
